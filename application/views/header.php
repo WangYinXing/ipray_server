@@ -16,7 +16,7 @@
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datepicker/datepicker3.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/daterangepicker/daterangepicker-bs3.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/flexigrid-1.1/css/flexigrid.css">
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/Flexigrid-master/css/flexigrid.css">
 
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/common.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/skin-custom.css">
@@ -24,7 +24,7 @@
 	<script src="<?php echo base_url(); ?>assets/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="<?php echo base_url(); ?>assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="<?php echo base_url(); ?>assets/plugins/iCheck/icheck.min.js"></script>
-	<script src="<?php echo base_url(); ?>assets/flexigrid-1.1/js/flexigrid.js"></script>
+	
   
   <!-- iCheck -->
 </head>

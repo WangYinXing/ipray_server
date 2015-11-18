@@ -22,7 +22,7 @@ class AdminLogin extends Home_Controller {
 
 	function __construct() {
 		parent::__construct();
-		$this->load->model('AdminUsers', '', TRUE);
+		$this->load->model('Mdl_AdminUsers', '', TRUE);
 	}
 
 	public function index() {
@@ -49,7 +49,7 @@ class AdminLogin extends Home_Controller {
 		$pass  = $this->input->post('password');
 
 		//Ensure values exist for email and pass, and validate the user's credentials
-		if( $username && $pass && $this->AdminUsers->login($username, $pass)) {
+		if( $username && $pass && $this->Mdl_AdminUsers->login($username, $pass)) {
 		  // If the user is valid, redirect to the main view
 		  redirect('/dashboard');
 		} else {
@@ -59,7 +59,7 @@ class AdminLogin extends Home_Controller {
 	}
 
 	public function logout() {
-		$this->AdminUsers->destroy_session();
+		$this->Mdl_AdminUsers->destroy_session();
 
 	    $this->show_login(false);
 	}

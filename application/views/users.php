@@ -1,3 +1,8 @@
+<head>
+  <script src="<?php echo base_url(); ?>assets/Flexigrid-master/js/flexigrid.js"></script>
+  <script src="<?php echo base_url(); ?>assets/dist/js/tableinit.js"></script>
+</head>
+
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -6,6 +11,9 @@
       <small><?php echo $page_desc; ?></small>
     </h1>
   </section>
+
+  <div id="main-table">
+  </div>
 
   <!-- Main content -->
   <section class="content">
