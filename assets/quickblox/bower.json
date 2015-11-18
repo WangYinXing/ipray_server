@@ -1,0 +1,42 @@
+{
+  "name": "quickblox",
+  "description": "QuickBlox JavaScript SDK",
+  "version": "1.16.0",
+  "homepage": "http://quickblox.com/developers/Javascript",
+  "main": "quickblox.js",
+  "license": "MIT",
+  "keywords": [
+    "quickblox",
+    "javascript",
+    "sdk",
+    "baas",
+    "cloud",
+    "api",
+    "chat",
+    "communication"
+  ],
+  "authors": [
+    "Igor Khomenko <igor@quickblox.com>",
+    "Alex Bass <alex.bass@quickblox.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/QuickBlox/quickblox-javascript-sdk.git"
+  },
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "examples",
+    "js",
+    "lib",
+    "node_modules",
+    "plugins",
+    "samples",
+    "spec",
+    "npm-debug.log",
+    "Gruntfile.js",
+    "package.json"
+  ]
+}
