@@ -1,0 +1,22 @@
+
+.skin-blue .main-header .logo,.skin-blue .main-header .navbar{
+	background-color: #222D32;
+}
+
+.skin-blue .main-header .logo:hover,.skin-blue .main-header .navbar .sidebar-toggle:hover {
+	background-color: #1e282c;
+}
+
+.navbar-custom-menu small {
+	color: rgba(255,255,255, 0.3);
+	margin-left:1em;
+}
+
+.login-box-body,.register-box-body{
+    background-color: rgba(0, 0, 0, 0.14);
+    padding: 20px;
+    padding-top:40px;
+    border-top: 0;
+    //border: 1px solid white;
+    color: #666;
+}
