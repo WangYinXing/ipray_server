@@ -7,7 +7,7 @@ class Users extends Home_Controller {
 		parent::__construct();
 
 		$this->load->model('Mdl_Users', '', TRUE);
-		$this->load->library('qbhelper');
+		$this->load->library('Qbhelper');
 	}
 
 	public function index() {

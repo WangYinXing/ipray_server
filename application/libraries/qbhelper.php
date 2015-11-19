@@ -1,7 +1,7 @@
 <?php
 
 
-class qbhelper {
+class Qbhelper {
 
 	function __construct() {
 		$this->latestErr = "";
