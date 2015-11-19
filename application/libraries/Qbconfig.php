@@ -16,7 +16,7 @@ define('QB_PATH_AUTH', "auth.json");
 define('QB_PATH_LOGIN', "login.json");
 
 
-class qbconfig {
+class Qbconfig {
 
 }
 
