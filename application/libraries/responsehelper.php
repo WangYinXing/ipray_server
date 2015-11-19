@@ -1,6 +1,5 @@
 <?php
 
-
 class responsehelper {
 	public function makeResponseWithErr($detail) {
 		return json_encode(
