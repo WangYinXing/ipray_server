@@ -27,6 +27,24 @@
           <small class="label pull-right bg-green">new</small>
         </a>
       </li>
+      <li <?php if ($page == 'storage') echo "class='active'";?>>
+        <a href="storage">
+          <i class="fa fa-user"></i> <span>STORAGE</span>
+          <small class="label pull-right bg-green">new</small>
+        </a>
+      </li>
+      <li <?php if ($page == 'settings') echo "class='active'";?>>
+        <a href="settings">
+          <i class="fa fa-user"></i> <span>SETTINGS</span>
+          <small class="label pull-right bg-green">new</small>
+        </a>
+      </li>
+      <li <?php if ($page == 'email') echo "class='active'";?>>
+        <a href="settings">
+          <i class="fa fa-user"></i> <span>EMAIL NOTIFICATION</span>
+          <small class="label pull-right bg-green">new</small>
+        </a>
+      </li>
       <li><a href="documentation/index.html"><i class="fa fa-book"></i> <span>ABOUT US</span></a></li>
     </ul>
   </section>

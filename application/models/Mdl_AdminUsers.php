@@ -1,6 +1,6 @@
 <?php
 
-Class Mdl_AdminUsers extends CI_Model {
+Class Mdl_AdminUsers extends Mdl_Campus {
 	function login($username, $password) {
 		$this->db->select("*");
 		$this->db->from("ipray_admins");

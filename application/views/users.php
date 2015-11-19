@@ -1,10 +1,12 @@
 <head>
   <script src="/assets/Flexigrid-master/js/flexigrid.js"></script>
   <script src="/assets/dist/js/tableinit.js"></script>
+<!--
   <script src="/assets/quickblox/quickblox.min.js"></script>
 
   <script src="/assets/quickblox/qbconfig.js"></script>
   <script src="/assets/quickblox/qbinit.js"></script>
+-->
 </head>
 
 <div class="content-wrapper">
@@ -31,8 +33,7 @@ $(function() {
       Init flexigrid and QB....
     */
     initTable();
-    initQB();
-
+    //initQB();
 
   });
 });

@@ -16,7 +16,7 @@
         <!-- small box -->
         <div class="small-box bg-yellow">
           <div class="inner">
-            <h3>44</h3>
+            <h3><?php echo $param['registered_users'] ?></h3>
 
             <p>User Registrations</p>
           </div>
@@ -32,7 +32,7 @@
           <div class="inner">
             <h3>150</h3>
 
-            <p>New Orders</p>
+            <p>Downloads</p>
           </div>
           <div class="icon">
             <i class="ion ion-bag"></i>
@@ -45,9 +45,9 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <h3>53<sup style="font-size: 20px">%</sup></h3>
+            <h3><?php echo $param['online_users'] ?><sup style="font-size: 20px">s</sup></h3>
 
-            <p>Bounce Rate</p>
+            <p>Online users</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>

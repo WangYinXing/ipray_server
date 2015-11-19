@@ -1,5 +1,5 @@
 <?php
-Class Mdl_Dashboard extends CI_Model {
+Class Mdl_Dashboard extends Mdl_Campus {
 	
 }
 ?>

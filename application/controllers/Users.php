@@ -5,11 +5,15 @@ class Users extends Home_Controller {
 
 	function __construct(){
 		parent::__construct();
+
 		$this->load->model('Mdl_Users', '', TRUE);
+		$this->load->library('qbhelper');
 	}
 
 	public function index() {
-		parent::initView('users', 'Manage iprayees for CRUDing');
+		parent::initView('users', 'Manage iprayees for CRUDing',
+			array()
+		);
 
 		parent::loadView();
 	}
@@ -41,19 +45,77 @@ class Users extends Home_Controller {
 		Sign up...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signup_user() {
-		$this->Mdl_Users->signup_user();
+		$qbToken = $this->qbhelper->generateSession();
+
+		if ($qbToken == null || $qbToken == "")
+			exit($this->responsehelper->makeResponseWithErr("Generating QB session has been failed."));
+
+		$qbSession = $this->qbhelper->signupUser(
+			$qbToken,
+			$_POST['username'],
+			$_POST['email'],
+			md5($_POST['password'])
+		);
+
+		/*
+
+		*/
+		if ($qbSession == null) {
+			exit($this->responsehelper->makeResponseWithErr("QB user creation failed."));
+		}
+
+		$newUser = $this->Mdl_Users->signup_user(
+			$_POST['username'],
+			$_POST['email'],
+			md5($_POST['password']),
+			$qbSession
+		);
+
+		if ($newUser == null) {
+			exit($this->responsehelper->makeResponseWithErr($this->Mdl_Users->latestErr));
+		}
 
 		/*
 			Now we should register qb user at first.....
 		*/
-		
+		exit($this->responsehelper->makeResponse($newUser, "User has been created successfully."));
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
 		Sign in...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signin_user() {
-		$this->Mdl_Users->signin_user();
+		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']));
+
+		if ($user == null) {
+			exit($this->responsehelper->makeResponseWithErr("Login detail incorrect."));
+		}
+
+		$qbToken = $this->qbhelper->generateSession();
+
+		if ($qbToken == null || $qbToken == "")
+			exit($this->responsehelper->makeResponseWithErr("Generating QB session has been failed."));
+
+
+		$qbUser = $this->qbhelper->signinUser(
+			$qbToken,
+			$_POST['email'],
+			md5($_POST['password'])
+		);
+
+		if ($qbUser == null) {
+			exit($this->responsehelper->makeResponseWithErr($this->qbhelper->latestErr));
+		}
+
+		$qbUser->token = $qbToken;
+
+		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']), $qbUser);
+
+		if ($user == null) {
+			exit($this->responsehelper->makeResponseWithErr("Login failed. QB signin failed."));
+		}
+
+		exit($this->responsehelper->makeResponse("Login succeed.", $user));
 	}
 }
 

@@ -23,10 +23,16 @@ class DashBoard extends Home_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model('Mdl_Dashboard', '', TRUE);
+		$this->load->model('Mdl_Users');
 	}
 
 	public function index() {
-		parent::initView('dashboard', 'dashboard');
+		parent::initView('dashboard', 'dashboard',
+			array(
+				'registered_users' => $this->Mdl_Users->get_usercnt(),
+				'online_users' => $this->Mdl_Users->online_usercnt(),
+				)
+			);
 
 		parent::loadView();
 	}
