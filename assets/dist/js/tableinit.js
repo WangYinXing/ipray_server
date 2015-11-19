@@ -1,7 +1,7 @@
 
 function initTable() {
 	$("#main-table").flexigrid({
-		url: 'http://ipraytest.com/users/api_entry_get_userlist',
+		url: 'users/api_entry_get_userlist',
 		dataType: 'json',
 		colModel : [
 		{display: 'User name', name : 'username', width : 150, sortable : true, align: 'left'},
