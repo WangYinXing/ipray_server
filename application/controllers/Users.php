@@ -48,7 +48,7 @@ class Users extends Home_Controller {
 		$qbToken = $this->qbhelper->generateSession();
 
 		if ($qbToken == null || $qbToken == "")
-			exit($this->responsehelper->makeResponseWithErr("Generating QB session has been failed."));
+			exit($this->resphelper->makeResponseWithErr("Generating QB session has been failed."));
 
 		$qbSession = $this->qbhelper->signupUser(
 			$qbToken,
@@ -61,7 +61,7 @@ class Users extends Home_Controller {
 
 		*/
 		if ($qbSession == null) {
-			exit($this->responsehelper->makeResponseWithErr("QB user creation failed."));
+			exit($this->resphelper->makeResponseWithErr("QB user creation failed."));
 		}
 
 		$newUser = $this->Mdl_Users->signup_user(
@@ -72,13 +72,13 @@ class Users extends Home_Controller {
 		);
 
 		if ($newUser == null) {
-			exit($this->responsehelper->makeResponseWithErr($this->Mdl_Users->latestErr));
+			exit($this->resphelper->makeResponseWithErr($this->Mdl_Users->latestErr));
 		}
 
 		/*
 			Now we should register qb user at first.....
 		*/
-		exit($this->responsehelper->makeResponse($newUser, "User has been created successfully."));
+		exit($this->resphelper->makeResponse($newUser, "User has been created successfully."));
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
@@ -88,13 +88,13 @@ class Users extends Home_Controller {
 		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']));
 
 		if ($user == null) {
-			exit($this->responsehelper->makeResponseWithErr("Login detail incorrect."));
+			exit($this->resphelper->makeResponseWithErr("Login detail incorrect."));
 		}
 
 		$qbToken = $this->qbhelper->generateSession();
 
 		if ($qbToken == null || $qbToken == "")
-			exit($this->responsehelper->makeResponseWithErr("Generating QB session has been failed."));
+			exit($this->resphelper->makeResponseWithErr("Generating QB session has been failed."));
 
 
 		$qbUser = $this->qbhelper->signinUser(
@@ -104,7 +104,7 @@ class Users extends Home_Controller {
 		);
 
 		if ($qbUser == null) {
-			exit($this->responsehelper->makeResponseWithErr($this->qbhelper->latestErr));
+			exit($this->resphelper->makeResponseWithErr($this->qbhelper->latestErr));
 		}
 
 		$qbUser->token = $qbToken;
@@ -112,10 +112,10 @@ class Users extends Home_Controller {
 		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']), $qbUser);
 
 		if ($user == null) {
-			exit($this->responsehelper->makeResponseWithErr("Login failed. QB signin failed."));
+			exit($this->resphelper->makeResponseWithErr("Login failed. QB signin failed."));
 		}
 
-		exit($this->responsehelper->makeResponse("Login succeed.", $user));
+		exit($this->resphelper->makeResponse("Login succeed.", $user));
 	}
 }
 

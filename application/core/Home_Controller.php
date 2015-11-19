@@ -10,7 +10,7 @@ class Home_Controller extends CI_Controller {
     $this->viewData = array();
 
     //
-    $this->load->library('responsehelper');
+    $this->load->library('Resphelper');
   }
 
   protected function initView($page, $desc, $param) {
