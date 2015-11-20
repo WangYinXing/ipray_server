@@ -50,11 +50,17 @@ class Users extends Home_Controller {
 		if ($qbToken == null || $qbToken == "")
 			exit($this->resphelper->makeResponseWithErr("Generating QB session has been failed."));
 
+		if (!isset($_POST['username']) || !isset($_POST['email']))
+			exit($this->resphelper->makeResponseWithErr("Username or email can't be blank."));
+
+		if (!isset($_POST['password']))
+			exit($this->resphelper->makeResponseWithErr("Password can't be blank."));
+
 		$qbSession = $this->qbhelper->signupUser(
 			$qbToken,
 			$_POST['username'],
 			$_POST['email'],
-			md5($_POST['password'])
+			$_POST['password']
 		);
 
 		/*
@@ -78,7 +84,7 @@ class Users extends Home_Controller {
 		/*
 			Now we should register qb user at first.....
 		*/
-		exit($this->resphelper->makeResponse($newUser, "User has been created successfully."));
+		exit($this->resphelper->makeResponse("User has been created successfully.", $newUser));
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
