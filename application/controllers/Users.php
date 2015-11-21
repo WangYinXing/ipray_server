@@ -60,7 +60,7 @@ class Users extends Home_Controller {
 			$qbToken,
 			$_POST['username'],
 			$_POST['email'],
-			$_POST['password']
+			md5($_POST['password'])
 		);
 
 		/*
