@@ -92,6 +92,16 @@ class Qbhelper {
 		*/
 		ob_start();
 		try {
+			$resp = json_decode($response);
+
+			$error = $resp->errors;
+
+			if ($error) {
+				$this->latestErr = json_encode($error);
+				return null;
+			}
+
+
 			$user = json_decode($response)->user;
 		}
 		catch (Exception $e) {

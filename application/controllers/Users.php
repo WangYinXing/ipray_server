@@ -67,7 +67,7 @@ class Users extends Home_Controller {
 
 		*/
 		if ($qbSession == null) {
-			exit($this->resphelper->makeResponseWithErr("QB user creation failed."));
+			exit($this->resphelper->makeResponseWithErr($this->qbhelper->latestErr));
 		}
 
 		$newUser = $this->Mdl_Users->signup_user(
