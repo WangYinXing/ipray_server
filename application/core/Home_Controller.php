@@ -6,11 +6,12 @@ class Home_Controller extends CI_Controller {
   public function __construct(){
     parent::__construct();
     // do whatever here - i often use this method for authentication controller
+
+    /*
+      Load model class from class name...
+    */
     
     $this->viewData = array();
-
-    //
-    $this->load->library('Resphelper');
   }
 
   protected function initView($page, $desc, $param) {

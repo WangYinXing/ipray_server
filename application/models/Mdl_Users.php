@@ -6,27 +6,7 @@ Class Mdl_Users extends Mdl_Campus {
 	function __construct() {
 		$this->table = 'ipray_users';
 	}
-
-	public function get_userlist($rp, $page, $query, $qtype, $sortname, $sortorder) {
-		$this->db->select("*");
-		$this->db->from($this->table);
-		$this->db->order_by($sortname, $sortorder);
-
-		if ($query != "" && $qtype != "") {
-			$this->db->like($qtype, $query);
-		}
-		
-		$this->db->limit($rp, $rp * ($page - 1));
-
-		return $this->db->get()->result();
-	}
-
-	public function get_usercnt() {
-		$this->db->select("id");
-		$this->db->from($this->table);
-		return $this->db->get()->num_rows();
-	}
-
+	
 	public function online_usercnt() {
 		$this->db->select("id");
 		$this->db->from($this->table);
@@ -35,7 +15,7 @@ Class Mdl_Users extends Mdl_Campus {
 		return $this->db->get()->num_rows();
 	}
 
-	public function signup_user($username, $email, $password, $qbuser) {
+	public function signup($username, $email, $password, $qbuser) {
 		$this->db->select("*");
 		$this->db->from($this->table);
 		$this->db->where('email', $email);
@@ -52,16 +32,14 @@ Class Mdl_Users extends Mdl_Campus {
 			'qbid'=> $qbuser->id,
 		);
 
-		$userID = $this->db->insert($this->table, $data);
-
-		if ($userID == 0) {
+		if (!$this->db->insert($this->table, $data)) {
 			$this->latestErr = "Failed to create excute sql with : " . json_encode($data);
-		}
-		else {
-			$this->latestErr = "";
+			return;
 		}
 
-		$data['id'] = $userID;
+		$data['id'] = $this->db->insert_id();
+
+		unset($data['password']);
 
 		return $data;
 	}

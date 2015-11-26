@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Users extends Home_Controller {
+class Users extends Api_Unit {
 
 	function __construct(){
 		parent::__construct();
@@ -25,8 +25,8 @@ class Users extends Home_Controller {
 	/*--------------------------------------------------------------------------------------------------------
 	User list for admin panel...
 	_________________________________________________________________________________________________________*/
-	public function api_entry_get_userlist() {
-		$data = $this->Mdl_Users->get_userlist(
+	public function api_entry_list() {
+		$data = $this->Mdl_Users->get_list(
 			$_POST['rp'],
 			$_POST['page'],
 			$_POST['query'],
@@ -36,7 +36,7 @@ class Users extends Home_Controller {
 
 		echo json_encode(array(
 			'page'=>$_POST['page'],
-			'total'=>$this->Mdl_Users->get_usercnt(),
+			'total'=>$this->Mdl_Users->get_length(),
 			'rows'=>$data,
 		));
 	}
@@ -44,17 +44,12 @@ class Users extends Home_Controller {
 	/*--------------------------------------------------------------------------------------------------------
 		Sign up...
 	_________________________________________________________________________________________________________*/
-	public function api_entry_signup_user() {
+	public function api_entry_signup() {
+		parent::validateParams(array("username", "email", "password"));
+
 		$qbToken = $this->qbhelper->generateSession();
 
-		if ($qbToken == null || $qbToken == "")
-			exit($this->resphelper->makeResponseWithErr("Generating QB session has been failed."));
-
-		if (!isset($_POST['username']) || !isset($_POST['email']))
-			exit($this->resphelper->makeResponseWithErr("Username or email can't be blank."));
-
-		if (!isset($_POST['password']))
-			exit($this->resphelper->makeResponseWithErr("Password can't be blank."));
+		if ($qbToken == null || $qbToken == "")							parent::returnWithErr("Generating QB session has been failed.");
 
 		$qbSession = $this->qbhelper->signupUser(
 			$qbToken,
@@ -66,11 +61,10 @@ class Users extends Home_Controller {
 		/*
 
 		*/
-		if ($qbSession == null) {
-			exit($this->resphelper->makeResponseWithErr($this->qbhelper->latestErr));
-		}
+		if ($qbSession == null)
+			parent::returnWithErr($this->qbhelper->latestErr);
 
-		$newUser = $this->Mdl_Users->signup_user(
+		$newUser = $this->Mdl_Users->signup(
 			$_POST['username'],
 			$_POST['email'],
 			md5($_POST['password']),
@@ -78,29 +72,29 @@ class Users extends Home_Controller {
 		);
 
 		if ($newUser == null) {
-			exit($this->resphelper->makeResponseWithErr($this->Mdl_Users->latestErr));
+			parent::returnWithErr($this->qbhelper->latestErr);
 		}
 
 		/*
 			Now we should register qb user at first.....
 		*/
-		exit($this->resphelper->makeResponse("User has been created successfully.", $newUser));
+		parent::returnWithoutErr("User has been created successfully.", $newUser);
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
 		Sign in...
 	_________________________________________________________________________________________________________*/
-	public function api_entry_signin_user() {
+	public function api_entry_signin() {
 		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']));
 
 		if ($user == null) {
-			exit($this->resphelper->makeResponseWithErr("Login detail incorrect."));
+			parent::returnWithErr("Login detail incorrect.");
 		}
 
 		$qbToken = $this->qbhelper->generateSession();
 
 		if ($qbToken == null || $qbToken == "")
-			exit($this->resphelper->makeResponseWithErr("Generating QB session has been failed."));
+			parent::returnWithErr("Generating QB session has been failed.");
 
 
 		$qbUser = $this->qbhelper->signinUser(
@@ -109,19 +103,18 @@ class Users extends Home_Controller {
 			md5($_POST['password'])
 		);
 
-		if ($qbUser == null) {
-			exit($this->resphelper->makeResponseWithErr($this->qbhelper->latestErr));
-		}
+		if ($qbUser == null)
+			parent::returnWithErr($this->qbhelper->latestErr);
 
 		$qbUser->token = $qbToken;
 
 		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']), $qbUser);
 
-		if ($user == null) {
-			exit($this->resphelper->makeResponseWithErr("Login failed. QB signin failed."));
-		}
+		if ($user == null)
+			parent::returnWithErr("Login failed. QB signin failed.");
 
-		exit($this->resphelper->makeResponse("Login succeed.", $user));
+
+		parent::returnWithoutErr("Login succeed.", $user);
 	}
 }
 

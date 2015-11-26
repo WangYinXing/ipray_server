@@ -1,7 +1,7 @@
 
 function initTable() {
 	$("#main-table").flexigrid({
-		url: 'users/api_entry_get_userlist',
+		url: 'users/api_entry_list',
 		dataType: 'json',
 		colModel : [
 		{display: 'User name', name : 'username', width : 150, sortable : true, align: 'left'},
