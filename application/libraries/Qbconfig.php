@@ -14,6 +14,7 @@ define('QB_PATH_SESSION', "session.json");
 define('QB_PATH_USER', "users.json");
 define('QB_PATH_AUTH', "auth.json");
 define('QB_PATH_LOGIN', "login.json");
+define('QB_PATH_EVENTS', "events.json");
 
 
 class Qbconfig {

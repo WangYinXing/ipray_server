@@ -28,10 +28,12 @@ class Mdl_Campus extends CI_Model {
 		return null;
 	}
 
-	public function getAll($field, $val) {
+	public function getAll($field = "", $val = "") {
 		$this->db->select("*");
 		$this->db->from($this->table);
-		$this->db->where($field, $val);
+
+		if ($field != "" && $val != "")
+			$this->db->where($field, $val);
 
 		$users = $this->db->get();
 
@@ -61,11 +63,46 @@ class Mdl_Campus extends CI_Model {
 		return $this->db->get()->num_rows();
 	}
 
-	public function addToArray($val, $strArray) {
-		$array = array();
+	public function addToStrArray($val, $strArray) {
+		$result = array();
 
-		if ($strArray == null)
-			
+		if ($strArray == null) {
+			array_push($result, $val);
+
+			return array("array" => $result, "succeed" => true);
+		}
+
+		$result = json_decode($strArray);
+
+		$key = array_search($val, $result);
+
+		if (in_array($val, $result)) {
+			return array("array" => $result, "succeed" => false);
+		}
+
+		array_push($result, $val);
+
+		return array("array" => $result, "succeed" => true);
+	}
+
+	public function removeFromStrArray($val, $strArray) {
+		$result = array();
+
+		if ($strArray == null) {
+			return array("array" => $result, "succeed" => false);
+		}
+
+		$result = json_decode($strArray);
+
+		if (!in_array($val, $result)) {
+			return array("array" => $result, "succeed" => false);
+		}
+
+		$key = array_search($val, $result);
+
+		unset($result[$key]);
+
+		return array("array" => $result, "succeed" => true);
 	}
 
 }

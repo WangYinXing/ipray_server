@@ -15,7 +15,7 @@ Class Mdl_Users extends Mdl_Campus {
 		return $this->db->get()->num_rows();
 	}
 
-	public function signup($username, $email, $password, $qbuser) {
+	public function signup($username, $email, $password, $fullname, $church, $province, $city, $bday, $qbuser) {
 		$this->db->select("*");
 		$this->db->from($this->table);
 		$this->db->where('email', $email);
@@ -28,7 +28,12 @@ Class Mdl_Users extends Mdl_Campus {
 		$data = array(
 			'email'=> $email,
 			'username'=> $username,
-			'password'=> $password,
+			'password'=> md5($password),
+			'fullname'=> $fullname,
+			'church'=> $church,
+			'province'=> $province,
+			'city'=> $city,
+			'bday'=> $bday,
 			'qbid'=> $qbuser->id,
 		);
 
@@ -44,39 +49,65 @@ Class Mdl_Users extends Mdl_Campus {
 		return $data;
 	}
 
-	public function signin_user($email, $password, $qbuser = null) {
+	public function signin($qbid, $token) {
 		$this->db->select("*");
 		$this->db->from($this->table);
 
-		$this->db->where("email", $email);
-		$this->db->where("password", $password);
+		$this->db->where("qbid", $qbid);
+		$user = $this->db->get()->result()[0];
 
-		$user = $this->db->get()->result();
 
-		if ( is_array($user) && count($user) == 1 ) {
-			$user = $user[0];
+		$this->db->select("*");
+		$this->db->where("qbid", $qbid);
 
-			if ($qbuser == null) {
-				return $user;
-			}
-
-			/*
-				Copy token from QB user...
-			*/
-			$user->token = $qbuser->token;
-
-			$this->db->where('id', $user->id);
-			$this->db->update($this->table, array('token'=> $qbuser->token));
-
-			/*
-				Prevent to send password to client...
-			*/
-			unset($user->password);
-
-			return $user;
+		if (!$this->db->update($this->table, array('token'=> $token))) {
+			return;
 		}
 
-		return null;
+		unset($user->password);
+		//unset($user->updated_time);
+
+		$user->token = $token;
+		
+		return $user;
+	}
+
+	public function signout($user) {
+		$this->db->select("*");
+		$this->db->from($this->table);
+		$this->db->where("id", $user);
+
+		if (!$this->db->update($this->table, array('token'=> ''))) {
+			return;
+		}
+
+		//unset($user->password);
+		//unset($user->updated_time);
+
+		//$user['token'] = '';
+
+		//return $user;
+	}
+
+	public function update($arg) {
+		$id = $arg['id'];
+
+		unset($arg['id']);
+
+		$this->db->select("*");
+		$this->db->from($this->table);
+
+		$this->db->where("id", $id);
+
+		if (!$this->db->update($this->table, $arg)) {
+			return;
+		}
+
+		$this->db->from($this->table);
+
+		$this->db->where("id", $id);
+
+		return $this->db->get()->result()[0];
 	}
 }
 

@@ -35,6 +35,9 @@ Class Requests extends Api_Unit {
 			$_POST['sortorder']);
 
 		foreach ($data as $key => $val) {
+			$val->host = $this->Mdl_Users->get($val->host);
+			unset($val->host->password);
+
 			$val->comments = $comments = $this->Mdl_Comments->getAll("request", $val->id);
 
 			if (count($comments) == 0)
@@ -44,6 +47,8 @@ Class Requests extends Api_Unit {
 				$user = $this->Mdl_Users->get($val->commenter);
 
 				$val->commenter = array(
+					'qbid' => $user->qbid,
+					'id' => $user->id,
 					'username' => $user->username,
 					'email' => $user->email
 					);
@@ -62,14 +67,21 @@ Class Requests extends Api_Unit {
 		*** POST
 	_________________________________________________________________________________________________________*/
 	public function api_entry_create() {
-		parent::validateParams(array("host", "motive", "detail", "anonymous"));
+		parent::validateParams(array("type", "host"));
 
-		$request = $this->Mdl_Requests->create(array(
-			'host' => $_POST['host'],
-			'motive' => $_POST['motive'],
-			'detail' => $_POST['detail'],
-			'anonymous' => $_POST['anonymous']
-			));
+		if ($_POST["type"] == "REQ_COMMON")				parent::validateParams(array("motive", "detail", "anonymous"));
+		else if ($_POST["type"] == "REQ_FEED") {
+			parent::validateParams(array("mediatype"));
+
+			if ($_POST["mediatype"] == "VIDEO" || $_POST["mediatype"] == "IMG") 	parent::validateParams(array("mediaurl"));
+			else if ($_POST["mediatype"] == "TEXT") 								parent::validateParams(array("detail"));
+			else parent::returnWithErr("Unknown media type.");
+		}
+		else {
+			parent::returnWithErr("Unknown request type.");
+		}
+
+		$request = $this->Mdl_Requests->create($this->safeArray(array('host', 'motive', 'detail', 'anonymous', 'type', 'mediatype', 'mediaurl'), $_POST));
 
 		if ($request == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
 
@@ -77,6 +89,30 @@ Class Requests extends Api_Unit {
 			Created successfully .... 
 		*/
 		parent::returnWithoutErr("Request has been created successfully.", $request);
+	}
+
+
+	/*--------------------------------------------------------------------------------------------------------
+		Pray to specific request...
+		*** POST
+	_________________________________________________________________________________________________________*/
+	public function api_entry_pray() {
+		parent::validateParams(array("user", "request"));
+
+		$this->load->model("Mdl_Users");
+		$this->load->model("Mdl_Requests");
+
+		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
+		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
+
+		if (($request = $this->Mdl_Requests->pray(
+			array(
+				'request' => $_POST['request'],
+				'user' => $_POST['user']
+				)
+			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
+
+		parent::returnWithoutErr("User have been started to pray successfully.", $request);
 	}
 
 
@@ -112,7 +148,7 @@ Class Requests extends Api_Unit {
 	public function api_entry_like() {
 		parent::validateParams(array("request", "user", "like"));
 
-		if ($_POST["like"] != "0" || $_POST["like"] != "1") {
+		if ($_POST["like"] != 0 && $_POST["like"] != 1) {
 			parent::returnWithErr("[like] should be '0' or '1'.");
 		}
 
@@ -123,7 +159,7 @@ Class Requests extends Api_Unit {
 		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
 
 
-		if (($group = $this->Mdl_Requests->likeUser(
+		if (($request = $this->Mdl_Requests->like(
 			array(
 				'request' => $_POST['request'],
 				'user' => $_POST['user'],
@@ -131,7 +167,31 @@ Class Requests extends Api_Unit {
 				)
 			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
 
-		parent::returnWithoutErr("User liked or disliked successfully.", $group);
+		parent::returnWithoutErr("User liked or disliked successfully.", $request);
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Like to request...
+		*** POST
+	_________________________________________________________________________________________________________*/
+	public function api_entry_share() {
+		parent::validateParams(array("request", "user"));
+
+		$this->load->model("Mdl_Users");
+		$this->load->model("Mdl_Requests");
+
+		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
+		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
+
+
+		if (($request = $this->Mdl_Requests->share(
+			array(
+				'request' => $_POST['request'],
+				'user' => $_POST['user']
+				)
+			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
+
+		parent::returnWithoutErr("User sharing is recorded successfully.", $request);
 	}
 }
 

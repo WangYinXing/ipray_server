@@ -29,7 +29,7 @@ class Dashboard extends Home_Controller {
 	public function index() {
 		parent::initView('dashboard', 'dashboard',
 			array(
-				'registered_users' => $this->Mdl_Users->get_usercnt(),
+				'registered_users' => $this->Mdl_Users->get_length(),
 				'online_users' => $this->Mdl_Users->online_usercnt(),
 				)
 			);

@@ -5,8 +5,8 @@ function initTable() {
 		dataType: 'json',
 		colModel : [
 		{display: 'User name', name : 'username', width : 150, sortable : true, align: 'left'},
-		{display: 'Email', name : 'email', width : 150, sortable : true, align: 'left'},
-		{display: 'QBID', name : 'qbID', width : 150, sortable : true, align: 'left'},
+		{display: 'Email', name : 'email', width : 250, sortable : true, align: 'left'},
+		{display: 'QBID', name : 'qbid', width : 100, sortable : true, align: 'left'},
 		],
 		buttons : [
 		{name: 'Edit', bclass: 'edit', onpress : doCommand},

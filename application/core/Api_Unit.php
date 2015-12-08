@@ -14,7 +14,7 @@ class Api_Unit extends Home_Controller {
     exit($this->resphelper->makeResponseWithErr($err));
   }
 
-  public function returnWithoutErr($msg, $data) {
+  public function returnWithoutErr($msg, $data = array()) {
     exit($this->resphelper->makeResponse($msg, $data));
   }
 
@@ -24,6 +24,17 @@ class Api_Unit extends Home_Controller {
         exit($this->resphelper->makeResponseWithErr("[" . $val . "] param is required. Please make sure that you have this parameter in HTTP body."));
       }
     }
+  }
+
+  public function safeArray($argNames, $argSrc) {
+    $safeArgs = array();
+
+    foreach($argNames as $val) {
+      if (isset($argSrc[$val]))
+        $safeArgs[$val] = $argSrc[$val];
+    }
+
+    return $safeArgs;
   }
 
 }

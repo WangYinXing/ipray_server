@@ -45,7 +45,7 @@ class Users extends Api_Unit {
 		Sign up...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signup() {
-		parent::validateParams(array("username", "email", "password"));
+		parent::validateParams(array("username", "email", "password", "fullname", "church", "province", "city", "bday"));
 
 		$qbToken = $this->qbhelper->generateSession();
 
@@ -68,6 +68,11 @@ class Users extends Api_Unit {
 			$_POST['username'],
 			$_POST['email'],
 			md5($_POST['password']),
+			$_POST['fullname'],
+			$_POST['church'],
+			$_POST['province'],
+			$_POST['city'],
+			$_POST['bday'],
 			$qbSession
 		);
 
@@ -85,36 +90,138 @@ class Users extends Api_Unit {
 		Sign in...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signin() {
-		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']));
+		parent::validateParams(array('qbid', 'token'));
 
-		if ($user == null) {
-			parent::returnWithErr("Login detail incorrect.");
-		}
+		$users = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
 
-		$qbToken = $this->qbhelper->generateSession();
+		if (count($users) == 0)
+			parent::returnWithErr("QBID is not valid. maybe not found corresponding user from qbid.");
+		
+		$user = $this->Mdl_Users->signin($_POST["qbid"], $_POST["token"]);
 
-		if ($qbToken == null || $qbToken == "")
-			parent::returnWithErr("Generating QB session has been failed.");
+		parent::returnWithoutErr("Signin succeed.", $user);
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Sign out...
+	_________________________________________________________________________________________________________*/
+	public function api_entry_signout() {
+		parent::validateParams(array('user'));
+
+		if (!$this->Mdl_Users->get($_POST["user"]))	parent::returnWithErr("User id is not valid.");
+		
+		$this->Mdl_Users->signout($_POST["user"]);
+
+		//if ($user == null)			parent::returnWithErr("Invalidation token failed.");
+
+		parent::returnWithoutErr("Signout succeed.");
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Submit device token, udid
+	_________________________________________________________________________________________________________*/
+	public function api_entry_subscribeAPN() {
+		parent::validateParams(array('user', 'udid', 'devicetoken'));
+
+		$users = $this->Mdl_Users->get($_POST["user"]);
+
+		if (!$this->Mdl_Users->get($_POST["user"]))			parent::returnWithErr("User id is not valid.");
+
+		$user = $this->Mdl_Users->update(array(
+			'id' => $_POST["user"],
+			'udid' => $_POST["udid"],
+			'devicetoken' => $_POST["devicetoken"]
+			));
+
+		parent::returnWithoutErr("Updated APN info successfully.", $user);
+	}
 
 
-		$qbUser = $this->qbhelper->signinUser(
-			$qbToken,
-			$_POST['email'],
-			md5($_POST['password'])
-		);
+	/*--------------------------------------------------------------------------------------------------------
+		Get profile ..
+	_________________________________________________________________________________________________________*/
+	public function api_entry_getprofilefromqbid() {
+		parent::validateParams(array('qbid'));
 
-		if ($qbUser == null)
-			parent::returnWithErr($this->qbhelper->latestErr);
+		$user = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
 
-		$qbUser->token = $qbToken;
+		if (count($user) == 0  || $user[0] == null)
+			parent::returnWithErr("QBID is not valid.");
 
-		$user = $this->Mdl_Users->signin_user($_POST['email'], md5($_POST['password']), $qbUser);
+		unset($user[0]->password);
+
+		parent::returnWithoutErr("User profile fetched successfully.", $user[0]);
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Get profile from qbid ..
+	_________________________________________________________________________________________________________*/
+	public function api_entry_getprofile() {
+		parent::validateParams(array('user'));
+
+		$user = $this->Mdl_Users->get($_POST["user"]);
 
 		if ($user == null)
-			parent::returnWithErr("Login failed. QB signin failed.");
+			parent::returnWithErr("User id is not valid.");
+
+		unset($user->password);
+
+		parent::returnWithoutErr("User profile fetched successfully.", $user);
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Set profile ..
+	_________________________________________________________________________________________________________*/
+	public function api_entry_setprofile() {
+		parent::validateParams(array('user'));
+
+		$user = $this->Mdl_Users->get($_POST["user"]);
+
+		if ($user == null)
+			parent::returnWithErr("User id is not valid.");
+
+		$arg = $this->safeArray(array('fullname', 'avatar', 'church', 'city', 'province', 'bday'), $_POST);
+
+		$arg['id'] = $_POST["user"];
+
+		if (count($arg) == 1)
+			parent::returnWithErr("You should pass the profile 1 entry at least to update.");
+
+		$user = $this->Mdl_Users->update($arg);
+
+		if ($user == null)
+			parent::returnWithErr("Profile has not been updated.");
+
+		parent::returnWithoutErr("Profile has been updated successfully.", $user);
+	}
 
 
-		parent::returnWithoutErr("Login succeed.", $user);
+	/*--------------------------------------------------------------------------------------------------------
+		send contact request...
+	_________________________________________________________________________________________________________*/
+	public function api_entry_sendcontactrequest() {
+		parent::validateParams(array('sender', 'receiver'));
+
+		if(!$this->Mdl_Users->get($_POST['sender']))		parent::returnWithErr("Sender is not valid");
+		if(!$this->Mdl_Users->get($_POST['receiver']))		parent::returnWithErr("Receiver is not valid");
+
+		//$qbToken = $this->qbhelper->generateSession();
+
+		//if ($qbToken == null || $qbToken == "")			parent::returnWithErr("Generating QB session has been failed.");
+
+		$sender = $this->Mdl_Users->get($_POST['sender']);
+		$receiver = $this->Mdl_Users->get($_POST['receiver']);
+
+		//$deviceToken = '98c348ad62372c6460218cfa879b5359852c16ee9d78af979ed8058d5bcba65f';
+
+		$this->qbhelper->sendPN($receiver->devicetoken, "You have been invited from " + $sender->username);
+
+		//$qbToken = $this->qbhelper->sendPN($qbToken, $user->qbid);
+
+
+
+
+		parent::returnWithoutErr("Contact request has been sent succeed.", $user);
 	}
 }
 

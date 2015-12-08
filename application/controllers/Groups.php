@@ -45,7 +45,7 @@ Class Groups extends Api_Unit {
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
-		Create group... 
+		Remove user from specific user... 
 		*** Invite user
 	_________________________________________________________________________________________________________*/
 	public function api_entry_add_user() {
@@ -67,7 +67,10 @@ Class Groups extends Api_Unit {
 
 		parent::returnWithoutErr("User has been added successfully.", $group);
 	}
-
+	/*--------------------------------------------------------------------------------------------------------
+		Remove user from specific user... 
+		*** Remove user
+	_________________________________________________________________________________________________________*/
 	public function api_entry_remove_user() {
 		parent::validateParams(array("group", "user"));
 
