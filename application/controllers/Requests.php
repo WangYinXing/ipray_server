@@ -24,6 +24,7 @@ Class Requests extends Api_Unit {
 		parent::validateParams(array("rp", "page", "query", "qtype", "sortname", "sortorder"));
 
 		$this->load->model("Mdl_Users");
+		$this->load->model("Mdl_Prays");
 		$this->load->model("Mdl_Comments");
 
 		$data = $this->Mdl_Requests->get_list(
@@ -39,6 +40,8 @@ Class Requests extends Api_Unit {
 			unset($val->host->password);
 
 			$val->comments = $comments = $this->Mdl_Comments->getAll("request", $val->id);
+
+			$val->prayers = $this->Mdl_Prays->getAll("request", $val->id);
 
 			if (count($comments) == 0)
 				continue;

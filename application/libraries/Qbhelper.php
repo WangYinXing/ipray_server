@@ -173,7 +173,7 @@ class Qbhelper {
 	/*--------------------------------------------------------------------------------------------------------
 		Send Push notification to specific user ...
 	_________________________________________________________________________________________________________*/
-	public function sendPN($deviceToken, $message) {
+	public function sendPN($deviceToken, $content) {
 		// set time limit to zero in order to avoid timeout
 		set_time_limit(0);
 		 
@@ -194,9 +194,14 @@ class Qbhelper {
 		);
 		 
 		// this is where you can customize your notification
-		$payload = '{"aps":{"alert":"' . $message . '","sound":"default"}}';
+		//$payload = '{"aps":{"alert":"' . $message . '","sound":"default", "type": "ipray_invitation", "sender":"' . $sender . '", "receiver":"' . $receiver . '"}}';
+		$payload = '{"aps":' . $content . '}';
+
+		//$payload = '{"aps":{"alert":"blah blah blah...","sound":"default", "type": "ipray_invitation"}}';
 		 
 		$result = 'Start' . '<br />';
+
+		ob_start();
 		 
 		////////////////////////////////////////////////////////////////////////////////
 		// start to create connection
@@ -205,6 +210,8 @@ class Qbhelper {
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 		 
 		echo count($deviceIds) . ' devices will receive notifications.<br />';
+
+		$undelivered = 0;
 		 
 		foreach ($deviceIds as $item) {
 		    // wait for some time
@@ -226,7 +233,8 @@ class Qbhelper {
 		    $result = fwrite($fp, $msg, strlen($msg));
 		     
 		    if (!$result) {
-		        echo 'Undelivered message count: ' . $item . '<br />';
+		        //echo 'Undelivered message count: ' . $item . '<br />';
+		        $undelivered++;
 		    } else {
 		        echo 'Delivered message count: ' . $item . '<br />';
 		    }
@@ -238,11 +246,13 @@ class Qbhelper {
 		}
 		 
 		echo count($deviceIds) . ' devices have received notifications.<br />';
-		 
 
+		ob_end_clean();
 		 
 		// set time limit back to a normal value
 		set_time_limit(30);
+
+		return $undelivered;
 	}
 /*
 	// function for fixing Turkish characters

@@ -43,6 +43,20 @@ class Mdl_Campus extends CI_Model {
 		return $users->result();
 	}
 
+	public function getAllEx($conditions) {
+		$this->db->select("*");
+		$this->db->from($this->table);
+
+		$this->db->where($conditions);
+
+		$users = $this->db->get();
+
+		if ($users->num_rows() == 0)
+			return;
+
+		return $users->result();
+	}
+
 	public function get_list($rp, $page, $query, $qtype, $sortname, $sortorder) {
 		$this->db->select("*");
 		$this->db->from($this->table);
@@ -61,6 +75,10 @@ class Mdl_Campus extends CI_Model {
 		$this->db->select("id");
 		$this->db->from($this->table);
 		return $this->db->get()->num_rows();
+	}
+
+	public function remove($id) {
+		$this->db->delete($this->table, array('id' => $id));
 	}
 
 	public function addToStrArray($val, $strArray) {

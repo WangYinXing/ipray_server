@@ -77,7 +77,7 @@ Class Mdl_Users extends Mdl_Campus {
 		$this->db->from($this->table);
 		$this->db->where("id", $user);
 
-		if (!$this->db->update($this->table, array('token'=> ''))) {
+		if (!$this->db->update($this->table, array('token'=> '', 'devicetoken' => '', 'udid' => ''))) {
 			return;
 		}
 
@@ -108,6 +108,53 @@ Class Mdl_Users extends Mdl_Campus {
 		$this->db->where("id", $id);
 
 		return $this->db->get()->result()[0];
+	}
+
+	public function makeFriends($a, $b) {
+		$this->latestErr = "";
+
+		$userA = $this->get($a);
+
+		if (!$userA) {
+			$this->latestErr = "UserA is not valid...";
+			return;
+		}
+
+		$ret = $this->addToStrArray($b, $userA->friends);
+
+		if (!$ret['succeed']) {
+			$this->latestErr = "This user added already.";
+			return;
+		}
+		
+
+		$this->db->from($this->table);
+		$this->db->where('id', $a);
+		$this->db->update($this->table, array('friends'=> json_encode($ret['array'])));
+
+
+
+
+
+		$userB = $this->get($b);
+
+		if (!$userB) {
+			$this->latestErr = "UserB is not valid...";
+			return;
+		}
+
+
+		$ret = $this->addToStrArray($a, $userB->friends);
+
+		if (!$ret['succeed']) {
+			$this->latestErr = "This user added already.";
+			return;
+		}
+		
+
+		$this->db->from($this->table);
+		$this->db->where('id', $b);
+		$this->db->update($this->table, array('friends'=> json_encode($ret['array'])));
 	}
 }
 

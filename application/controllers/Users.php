@@ -55,7 +55,7 @@ class Users extends Api_Unit {
 			$qbToken,
 			$_POST['username'],
 			$_POST['email'],
-			md5($_POST['password'])
+			$_POST['password']
 		);
 
 		/*
@@ -67,7 +67,7 @@ class Users extends Api_Unit {
 		$newUser = $this->Mdl_Users->signup(
 			$_POST['username'],
 			$_POST['email'],
-			md5($_POST['password']),
+			$_POST['password'],
 			$_POST['fullname'],
 			$_POST['church'],
 			$_POST['province'],
@@ -133,7 +133,26 @@ class Users extends Api_Unit {
 			'devicetoken' => $_POST["devicetoken"]
 			));
 
-		parent::returnWithoutErr("Updated APN info successfully.", $user);
+		parent::returnWithoutErr("Subscription has been done successfully.", $user);
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Make device token to void, udid
+	_________________________________________________________________________________________________________*/
+	public function api_entry_unsubscribeAPN() {
+		parent::validateParams(array('user' ));
+
+		$users = $this->Mdl_Users->get($_POST["user"]);
+
+		if (!$this->Mdl_Users->get($_POST["user"]))			parent::returnWithErr("User id is not valid.");
+
+		$user = $this->Mdl_Users->update(array(
+			'id' => $_POST["user"],
+			'udid' => '',
+			'devicetoken' => ''
+			));
+
+		parent::returnWithoutErr("Unsubscription has been done successfully.", $user);
 	}
 
 
@@ -166,6 +185,29 @@ class Users extends Api_Unit {
 
 		unset($user->password);
 
+		$this->load->model('Mdl_Requests');
+		$this->load->model('Mdl_Prays');
+
+		$user->ipray_praying_for_me = 0;
+		$user->ipray_i_am_praying_for = 0;
+		$user->ipray_request_attended = 0;
+
+		$prays = $this->Mdl_Prays->getAll();
+		$requests = array();
+
+		foreach ($prays as $key => $val) {
+			$request = $this->Mdl_Requests->get($val->request);
+			$prayer = $this->Mdl_Users->get($val->prayer);
+
+			if ($_POST["user"] == $request->host) {
+				if ($val->status == 1)	$user->ipray_request_attended++;
+				$user->ipray_praying_for_me++;
+			}
+			if ($_POST["user"] == $val->prayer) {
+				$user->ipray_i_am_praying_for++;
+			}
+		}
+
 		parent::returnWithoutErr("User profile fetched successfully.", $user);
 	}
 
@@ -180,7 +222,7 @@ class Users extends Api_Unit {
 		if ($user == null)
 			parent::returnWithErr("User id is not valid.");
 
-		$arg = $this->safeArray(array('fullname', 'avatar', 'church', 'city', 'province', 'bday'), $_POST);
+		$arg = $this->safeArray(array('fullname', 'avatar', 'church', 'city', 'province', 'bday', 'mood'), $_POST);
 
 		$arg['id'] = $_POST["user"];
 
@@ -197,31 +239,200 @@ class Users extends Api_Unit {
 
 
 	/*--------------------------------------------------------------------------------------------------------
-		send contact request...
+		Make friends ...
 	_________________________________________________________________________________________________________*/
-	public function api_entry_sendcontactrequest() {
-		parent::validateParams(array('sender', 'receiver'));
+	public function api_entry_sendnotification() {
+		parent::validateParams(array('sender', 'receiver', 'subject'));
 
 		if(!$this->Mdl_Users->get($_POST['sender']))		parent::returnWithErr("Sender is not valid");
 		if(!$this->Mdl_Users->get($_POST['receiver']))		parent::returnWithErr("Receiver is not valid");
 
-		//$qbToken = $this->qbhelper->generateSession();
-
-		//if ($qbToken == null || $qbToken == "")			parent::returnWithErr("Generating QB session has been failed.");
-
 		$sender = $this->Mdl_Users->get($_POST['sender']);
 		$receiver = $this->Mdl_Users->get($_POST['receiver']);
 
-		//$deviceToken = '98c348ad62372c6460218cfa879b5359852c16ee9d78af979ed8058d5bcba65f';
+		unset($sender->password);
+		unset($receiver->password);
 
-		$this->qbhelper->sendPN($receiver->devicetoken, "You have been invited from " + $sender->username);
+		if 		($_POST['subject'] == "ipray_sendinvitation") {
+			$msg = $sender->username . " has invited you.";
+		}
+		else if ($_POST['subject'] == "ipray_acceptinvitation") {
+			$msg = $sender->username . " has accepted your invitation.";
 
-		//$qbToken = $this->qbhelper->sendPN($qbToken, $user->qbid);
+			// sender ---> receiver 
+			$this->Mdl_Users->makeFriends($_POST["sender"], $_POST["receiver"]);
+		}
+		else if ($_POST['subject'] == "ipray_rejectinvitation") {
+			$msg = $sender->username . " has rejected your invitation.";
+		}
+		else if ($_POST['subject'] == 'ipray_sendprayrequest') {
+			parent::validateParams(array('request'));
+		}
+		else if ($_POST['subject'] == 'ipray_acceptprayrequest') {
+			parent::validateParams(array('request'));
+
+			
+		}
+		else if ($_POST['subject'] == 'ipray_rejectprayrequest') {
+			parent::validateParams(array('request'));
+
+			
+		}
+		else {
+			parent::returnWithErr("Unknown subject is requested.");
+		}
+
+		if ($receiver->devicetoken == "" || !isset($receiver->devicetoken))
+			parent::returnWithErr("User didn't subscribe.");
+
+		$payload = array(
+			'sound' => "default",
+			'subject' => $_POST['subject'],
+			'alert' => $msg,
+			'sender' => $sender,
+			'receiver' => $receiver
+			);
+
+		if (($failedCnt = $this->qbhelper->sendPN($receiver->devicetoken, json_encode($payload))) == 0) {
+			$this->load->model('Mdl_Notifications');
+			$this->Mdl_Notifications->create(array(
+				'subject' => $_POST['subject'],
+				'message' => $msg,
+				'sender' => $sender->id,
+				'receiver' => $receiver->id
+				));
+
+			parent::returnWithoutErr("Contact request has been sent successfully.");
+		}
+		else {
+			parent::returnWithErr($failedCnt . " requests have not been sent.");
+		}
+		
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
+		Pray ...
+	_________________________________________________________________________________________________________*/
+	public function api_entry_pray() {
+		parent::validateParams(array('prayer', 'subject', 'request'));
+
+		$this->load->model('Mdl_Requests');
+		$this->load->model('Mdl_Prays');
+
+
+		if(!($prayer = $this->Mdl_Users->get($_POST['prayer'])))			parent::returnWithErr("Prayer is not valid");
+		if(!($request = $this->Mdl_Requests->get($_POST['request'])))		parent::returnWithErr("Request id is not valid");
+		if(!($host = $this->Mdl_Users->get($request->host)))				parent::returnWithErr("Unknown request host.");
+
+		if ($request->type != "REQ_COMMON") 								parent::returnWithErr("Invalid request type. " . $request->type);
+
+		unset($prayer->password);
+		unset($host->password);
+
+		if 		($_POST['subject'] == 'ipray_sendprayrequest') {
+			/*
+				pray is already exist. and we would check the status.
+				status = 0 ====> deny to send.
+				status = 1 ====> deny to send.
+				status = 2 ====> resend request...
+			*/
+			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
+				$pray = $pray[0];
+
+				if 		($pray->status == 0)				parent::returnWithErr("Pray request is already sent.");
+				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
+				else if ($pray->status == 2) {
+					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 0);
+				}
+			}
+			else {
+				$this->Mdl_Prays->create(array(
+				'request' => $request->id,
+				'prayer' => $prayer->id
+				));
+			}
+
+			$msg = $prayer->username . " would like to pray for you.";
+
+			$sender = $prayer;
+			$receiver = $host;
+		}
+		else if ($_POST['subject'] == 'ipray_acceptprayrequest') {
+			/*
+
+			*/
+			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
+				$pray = $pray[0];
+
+				if 		($pray->status == 2)				parent::returnWithErr("Pray request is already rejected.");
+				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
+				else if ($pray->status == 0) {
+					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 1);
+				}
+			} 
+			else {
+				parent::returnWithErr("Pray request is not sent yet.");
+			}
+
+			$msg = $prayer->username . " accepted your pray request.";
+
+			$sender = $host;
+			$receiver = $prayer;
+		}
+		else if ($_POST['subject'] == 'ipray_rejectprayrequest') {
+
+			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
+				$pray = $pray[0];
+
+				if 		($pray->status == 2)				parent::returnWithErr("Pray request is already rejected.");
+				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
+				else if ($pray->status == 0) {
+					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 2);
+				}
+			} 
+			else {
+				parent::returnWithErr("Pray request is not sent yet.");
+			}
+
+			$msg = "No thanks.";
+
+			$sender = $host;
+			$receiver = $prayer;
+		}
+		else {
+			parent::returnWithErr("Unknown subject is requested.");
+		}
+
+		if ($receiver->devicetoken == "" || !isset($receiver->devicetoken))
+			parent::returnWithErr("User didn't subscribe.");
+
+		$payload = array(
+			'sound' => "default",
+			'subject' => $_POST['subject'],
+			'alert' => $msg,
+			'sender' => $sender,
+			'receiver' => $receiver,
+			'meta' => json_encode(array('request' => $request))
+			);
 
 
 
+		if (($failedCnt = $this->qbhelper->sendPN($host->devicetoken, json_encode($payload))) == 0) {
+			$this->load->model('Mdl_Notifications');
+			$this->Mdl_Notifications->create(array(
+				'subject' => $_POST['subject'],
+				'message' => $msg,
+				'sender' => $sender->id,
+				'receiver' => $receiver->id,
+				'meta' => json_encode(array('request' => $request))
+				));
 
-		parent::returnWithoutErr("Contact request has been sent succeed.", $user);
+			parent::returnWithoutErr("Contact request has been sent successfully.");
+		}
+		else {
+			parent::returnWithErr($failedCnt . " requests have not been sent.");
+		}
+		
 	}
 }
 
