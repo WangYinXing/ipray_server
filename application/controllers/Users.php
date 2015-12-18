@@ -145,6 +145,15 @@ class Users extends Api_Unit {
 		</body>
 		</html>";
 
+		$headers = 'From: iPray <support@ipray1.com>' . "\r\n";
+/*
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+		// 追加のヘッダ
+		$headers .= 'To: Mary <wangyinxing19@gmail.com>' . "\r\n";
+		$headers .= 'From: iPray <support@ipray1.com>' . "\r\n";
+*/
 		if (mail($to, $subject, $message, $headers)) {
 			parent::returnWithoutErr("Email is sent successfully.");
 		}
