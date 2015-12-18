@@ -138,14 +138,11 @@ class Users extends Api_Unit {
 		$headers   = array();
 		$headers[] = "MIME-Version: 1.0";
 		$headers[] = "Content-type: text/html; charset=iso-8859-1";
-		$headers[] = "From: noreply@toptenpercent.co";
-		$headers[] = "Reply-To: noreply@toptenpercent.co<noreply@toptenpercent.co>";
-		if (count($cc)){
-		$ccs = implode(',', $cc);
-		$headers[] = "Cc: $ccs";
-		}
+		$headers[] = "From: noreply@ipray1.com";
+		$headers[] = "Reply-To: noreply@ipray1.com<noreply@ipray1.com>";
+		
 		$headers[] = "Subject: {$subject}";
-		$headers[] = "X-Mailer: PHP/".phpversion();
+		$headers[] = "X-Mailer: PHP/". phpversion();
 
 		if (mail($to, $subject, $content, implode("\r\n", $headers))) {
 			parent::returnWithoutErr("Email is sent successfully.");
