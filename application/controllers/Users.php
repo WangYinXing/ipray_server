@@ -131,32 +131,23 @@ class Users extends Api_Unit {
 		$to = $user->email;
 		$to  = 'wangyinxing19@gmail.com';
 
+		$subject = 'hi';
+		$content = 'hi again';
 
-		$subject = 'Forget password for iPray.';
 
-		$message = "
-		<html>
-		<head>
-		  <title>You've forgot your password. but don't worry.</title>
-		</head>
-		<body>
-		  <p>Your password will be reset by clicking this link.</p>
-		  <a href='http://localhost/users/forgotpassword?hash=" . $hash . "'></a>
-		</body>
-		</html>";
+		$headers   = array();
+		$headers[] = "MIME-Version: 1.0";
+		$headers[] = "Content-type: text/html; charset=iso-8859-1";
+		$headers[] = "From: noreply@toptenpercent.co";
+		$headers[] = "Reply-To: noreply@toptenpercent.co<noreply@toptenpercent.co>";
+		if (count($cc)){
+		$ccs = implode(',', $cc);
+		$headers[] = "Cc: $ccs";
+		}
+		$headers[] = "Subject: {$subject}";
+		$headers[] = "X-Mailer: PHP/".phpversion();
 
-		$headers = "From: iPray <support@ipray1.com>" . PHP_EOL;
-        $headers .= "MIME-Version: 1.0". PHP_EOL;
-        $headers .= "Content-Type: text/html; charset=ISO-8859-1" . PHP_EOL;
-/*
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-		// 追加のヘッダ
-		$headers .= 'To: Mary <wangyinxing19@gmail.com>' . "\r\n";
-		$headers .= 'From: iPray <support@ipray1.com>' . "\r\n";
-*/
-		if (mail($to, $subject, $message, $headers)) {
+		if (mail($to, $subject, $content, implode("\r\n", $headers))) {
 			parent::returnWithoutErr("Email is sent successfully.");
 		}
 
