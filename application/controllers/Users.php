@@ -143,15 +143,7 @@ class Users extends Api_Unit {
 		  <p>Your password will be reset by clicking this link.</p>
 		  <a href='http://localhost/users/forgotpassword?hash=" . $hash . "'></a>
 		</body>
-		</html>
-		";
-		
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-		// 追加のヘッダ
-		$headers .= 'To: Mary <wangyinxing19@gmail.com>' . "\r\n";
-		$headers .= 'From: iPray <support@ipray1.com>' . "\r\n";
+		</html>";
 
 		if (mail($to, $subject, $message, $headers)) {
 			parent::returnWithoutErr("Email is sent successfully.");
