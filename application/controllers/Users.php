@@ -132,7 +132,7 @@ class Users extends Api_Unit {
 		$to  = 'wangyinxing19@gmail.com';
 
 		$subject = 'hi';
-		$content = 'hi again';
+		$content = '<html><body>Hi</body></html>';
 
 
 		$headers   = array();
