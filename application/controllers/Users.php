@@ -144,7 +144,7 @@ class Users extends Api_Unit {
 		$headers[] = "Subject: {$subject}";
 		$headers[] = "X-Mailer: PHP/". phpversion();
 
-		if (mail($to, $subject, $content, implode("\r\n", $headers))) {
+		if (mail($to, $subject, $content)) {
 			parent::returnWithoutErr("Email is sent successfully.");
 		}
 
