@@ -43,10 +43,10 @@ Class Prays extends Api_Unit {
 			$request->pray_time = $val->updated_time;
 
 			$request->status = $val->status;
+			$request->prayer = $prayer;
 
 			if ($_POST["type"] == "ipray_praying_for_me") {
 				if ($_POST["user"] == $request->host->id) {
-					$request->prayer = $prayer;
 					array_push($requests, $request);
 				}
 			}
@@ -57,7 +57,6 @@ Class Prays extends Api_Unit {
 			}
 			else if ($_POST["type"] == "ipray_request_attended") {
 				if ($_POST["user"] == $request->host && $val->status == 1) {
-					$request->prayer = $prayer;
 					array_push($requests, $request);
 				}
 			}

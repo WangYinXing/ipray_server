@@ -96,30 +96,6 @@ Class Requests extends Api_Unit {
 
 
 	/*--------------------------------------------------------------------------------------------------------
-		Pray to specific request...
-		*** POST
-	_________________________________________________________________________________________________________*/
-	public function api_entry_pray() {
-		parent::validateParams(array("user", "request"));
-
-		$this->load->model("Mdl_Users");
-		$this->load->model("Mdl_Requests");
-
-		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
-		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
-
-		if (($request = $this->Mdl_Requests->pray(
-			array(
-				'request' => $_POST['request'],
-				'user' => $_POST['user']
-				)
-			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
-
-		parent::returnWithoutErr("User have been started to pray successfully.", $request);
-	}
-
-
-	/*--------------------------------------------------------------------------------------------------------
 		Comment to request...
 		*** POST
 	_________________________________________________________________________________________________________*/

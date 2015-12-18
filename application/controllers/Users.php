@@ -118,6 +118,49 @@ class Users extends Api_Unit {
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
+		Sign out...
+	_________________________________________________________________________________________________________*/
+	public function api_entry_forgotpassword() {
+		parent::validateParams(array('user'));
+
+		if (!($user = $this->Mdl_Users->get($_POST["user"])))	parent::returnWithErr("User id is not valid.");
+
+		$hash = hash('tiger192,3', $user->username);
+
+
+		$to = $user->email;
+		$to  = 'wangyinxing19@gmail.com';
+
+
+		$subject = 'Forget password for iPray.';
+
+		$message = "
+		<html>
+		<head>
+		  <title>You've forgot your password. but don't worry.</title>
+		</head>
+		<body>
+		  <p>Your password will be reset by clicking this link.</p>
+		  <a href='http://localhost/users/forgotpassword?hash=" . $hash . "'></a>
+		</body>
+		</html>
+		";
+		
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+		// 追加のヘッダ
+		$headers .= 'To: Mary <wangyinxing19@gmail.com>' . "\r\n";
+		$headers .= 'From: iPray <support@ipray1.com>' . "\r\n";
+
+		if (mail($to, $subject, $message, $headers)) {
+			parent::returnWithoutErr("Email is sent successfully.");
+		}
+
+		parent::returnWithErr("Email sending failed.");
+	}
+
+	/*--------------------------------------------------------------------------------------------------------
 		Submit device token, udid
 	_________________________________________________________________________________________________________*/
 	public function api_entry_subscribeAPN() {
@@ -329,75 +372,22 @@ class Users extends Api_Unit {
 		unset($prayer->password);
 		unset($host->password);
 
+		if ($host->id == $prayer->id)
+			parent::returnWithErr("You can't pray for yourself.");
+
 		if 		($_POST['subject'] == 'ipray_sendprayrequest') {
-			/*
-				pray is already exist. and we would check the status.
-				status = 0 ====> deny to send.
-				status = 1 ====> deny to send.
-				status = 2 ====> resend request...
-			*/
-			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
-				$pray = $pray[0];
-
-				if 		($pray->status == 0)				parent::returnWithErr("Pray request is already sent.");
-				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
-				else if ($pray->status == 2) {
-					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 0);
-				}
-			}
-			else {
-				$this->Mdl_Prays->create(array(
-				'request' => $request->id,
-				'prayer' => $prayer->id
-				));
-			}
-
 			$msg = $prayer->username . " would like to pray for you.";
 
 			$sender = $prayer;
 			$receiver = $host;
+			$status = 0;
 		}
-		else if ($_POST['subject'] == 'ipray_acceptprayrequest') {
-			/*
-
-			*/
-			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
-				$pray = $pray[0];
-
-				if 		($pray->status == 2)				parent::returnWithErr("Pray request is already rejected.");
-				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
-				else if ($pray->status == 0) {
-					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 1);
-				}
-			} 
-			else {
-				parent::returnWithErr("Pray request is not sent yet.");
-			}
-
+		else if ($_POST['subject'] == 'ipray_answerprayrequest') {
 			$msg = $prayer->username . " accepted your pray request.";
 
 			$sender = $host;
 			$receiver = $prayer;
-		}
-		else if ($_POST['subject'] == 'ipray_rejectprayrequest') {
-
-			if ($pray = $this->Mdl_Prays->getAllEx(array('request' => $request->id, 'prayer' => $prayer->id))) {
-				$pray = $pray[0];
-
-				if 		($pray->status == 2)				parent::returnWithErr("Pray request is already rejected.");
-				else if ($pray->status == 1)				parent::returnWithErr("Pray request is already accepted.");
-				else if ($pray->status == 0) {
-					$this->Mdl_Prays->changeStatus($request->id, $prayer->id, 2);
-				}
-			} 
-			else {
-				parent::returnWithErr("Pray request is not sent yet.");
-			}
-
-			$msg = "No thanks.";
-
-			$sender = $host;
-			$receiver = $prayer;
+			$status = 1;
 		}
 		else {
 			parent::returnWithErr("Unknown subject is requested.");
@@ -406,12 +396,20 @@ class Users extends Api_Unit {
 		if ($receiver->devicetoken == "" || !isset($receiver->devicetoken))
 			parent::returnWithErr("User didn't subscribe.");
 
+		$pray = $this->Mdl_Prays->create(array(
+				'request' => $request->id,
+				'prayer' => $prayer->id,
+				'status' => $status
+				));
+
 		$payload = array(
 			'sound' => "default",
 			'subject' => $_POST['subject'],
 			'alert' => $msg,
 			'sender' => $sender,
 			'receiver' => $receiver,
+			'request' => $request,
+			'pray_id' => $pray['id'],
 			'meta' => json_encode(array('request' => $request))
 			);
 
