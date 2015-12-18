@@ -145,7 +145,9 @@ class Users extends Api_Unit {
 		</body>
 		</html>";
 
-		$headers = 'From: iPray <support@ipray1.com>' . "\r\n";
+		$headers = "From: iPray <support@ipray1.com>" . PHP_EOL;
+        $headers .= "MIME-Version: 1.0". PHP_EOL;
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1" . PHP_EOL;
 /*
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
