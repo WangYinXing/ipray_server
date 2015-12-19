@@ -1,6 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+
+//require 'mailgun-php/vendor/autoload.php';
+//use Mailgun\Mailgun;
+
+
 class Users extends Api_Unit {
 
 	function __construct(){
@@ -127,28 +132,25 @@ class Users extends Api_Unit {
 
 		$hash = hash('tiger192,3', $user->username);
 
-
-		$to = $user->email;
-		$to  = 'wangyinxing19@gmail.com';
-
-		$subject = 'hi';
-		$content = '<html><body>Hi</body></html>';
-
-
-		$headers   = array();
-		$headers[] = "MIME-Version: 1.0";
-		$headers[] = "Content-type: text/html; charset=iso-8859-1";
-		$headers[] = "From: noreply@ipray1.com";
-		$headers[] = "Reply-To: noreply@ipray1.com<noreply@ipray1.com>";
 		
-		$headers[] = "Subject: {$subject}";
-		$headers[] = "X-Mailer: PHP/". phpversion();
 
-		if (mail($to, $subject, $content)) {
-			parent::returnWithoutErr("Email is sent successfully.");
-		}
 
-		parent::returnWithErr("Email sending failed.");
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+		curl_setopt($ch, CURLOPT_USERPWD, 'api:key-061710f7633b3b2e2971afade78b48ea');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_URL, 
+		      'https://api.mailgun.net/v3/sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org/messages');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 
+		        array('from' => 'Dwight Schrute <postmaster@sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org>',
+		              'to' => 'Michael Scott <wangyinxing19@gmail.com>',
+		              'subject' => 'The Printer Caught Fire',
+		              'text' => 'We have a problem.'));
+		$result = curl_exec($ch);
+		curl_close($ch);
+		print_r($result);
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
