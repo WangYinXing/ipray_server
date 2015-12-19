@@ -575,18 +575,21 @@ class Users extends Api_Unit {
 		$prays = $this->Mdl_Prays->getAll();
 		$requests = array();
 
-		foreach ($prays as $key => $val) {
-			$request = $this->Mdl_Requests->get($val->request);
-			$prayer = $this->Mdl_Users->get($val->prayer);
+		if (count($prays)) {
+			foreach ($prays as $key => $val) {
+				$request = $this->Mdl_Requests->get($val->request);
+				$prayer = $this->Mdl_Users->get($val->prayer);
 
-			if ($_POST["user"] == $request->host) {
-				if ($val->status == 1)	$user->ipray_request_attended++;
-				$user->ipray_praying_for_me++;
-			}
-			if ($_POST["user"] == $val->prayer) {
-				$user->ipray_i_am_praying_for++;
+				if ($_POST["user"] == $request->host) {
+					if ($val->status == 1)	$user->ipray_request_attended++;
+					$user->ipray_praying_for_me++;
+				}
+				if ($_POST["user"] == $val->prayer) {
+					$user->ipray_i_am_praying_for++;
+				}
 			}
 		}
+		
 
 		parent::returnWithoutErr("User profile fetched successfully.", $user);
 	}
