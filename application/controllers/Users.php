@@ -446,7 +446,7 @@ class Users extends Api_Unit {
 				                                                    <table class="cta" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="center" cellpadding="0" cellspacing="0">
 				                                                        <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
 				                                                            <td class="cta-blue-gradient" style="-moz-border-radius: 4px; -ms-text-size-adjust: 100%; -webkit-border-radius: 4px; -webkit-text-size-adjust: 100%; background: #1574bb linear-gradient(top, #2a87c7, #1a6599); border-radius: 4px; box-sizing: border-box; color: #FFFFFF; display: inline-block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 22px; font-weight: normal; line-height: 22px; margin: 0; mso-line-height-rule: exactly; padding: 15px 60px; text-align: center; text-decoration: none; vertical-align: top" align="center" bgcolor="#1574bb" valign="top">
-				                                                                <a target="_blank" href="'. $baseurl . '/adminlogin/forgotpassword?token='. $hash .'" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; color: #FFFFFF; display: block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-decoration: none; text-shadow: 0px -1px 2px #333333">Reset&nbsp;Password</a>
+				                                                                <a target="_blank" href="http://'. $baseurl . '/AdminLogin/forgotpassword?token='. $hash .'" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; color: #FFFFFF; display: block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-decoration: none; text-shadow: 0px -1px 2px #333333">Reset&nbsp;Password</a>
 				                                                            </td>
 				                                                        </tr>
 				                                                    </tbody></table>
@@ -488,10 +488,10 @@ class Users extends Api_Unit {
 		curl_setopt($ch, CURLOPT_URL, 
 		      'https://api.mailgun.net/v3/sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org/messages');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 
-		        array('from' => 'Dwight Schrute <postmaster@sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org>',
+		        array('from' => 'noreply@iPray1.com <postmaster@ipray1.com>',
 		              'to' => $user->username . ' <' . $user->email . '>',
 		              'subject' => "You have forgot your passowrd.",
-		              'text' => $content));
+		              'html' => $content));
 		$result = curl_exec($ch);
 		curl_close($ch);
 		print_r($result);
