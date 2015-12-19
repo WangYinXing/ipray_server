@@ -60,7 +60,7 @@ class Users extends Api_Unit {
 			$qbToken,
 			$_POST['username'],
 			$_POST['email'],
-			$_POST['password']
+			QB_DEFAULT_PASSWORD
 		);
 
 		/*
@@ -72,7 +72,7 @@ class Users extends Api_Unit {
 		$newUser = $this->Mdl_Users->signup(
 			$_POST['username'],
 			$_POST['email'],
-			$_POST['password'],
+			md5($_POST['password']),
 			$_POST['fullname'],
 			$_POST['church'],
 			$_POST['province'],
@@ -95,9 +95,12 @@ class Users extends Api_Unit {
 		Sign in...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signin() {
-		parent::validateParams(array('qbid', 'token'));
+		parent::validateParams(array('qbid', 'token', 'password'));
 
 		$users = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
+
+		if ($user->password != md5($_POST["password"]))			parent::returnWithErr("Invalid password.");
+
 
 		if (count($users) == 0)
 			parent::returnWithErr("QBID is not valid. maybe not found corresponding user from qbid.");
@@ -126,15 +129,352 @@ class Users extends Api_Unit {
 		Sign out...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_forgotpassword() {
-		parent::validateParams(array('user'));
+		parent::validateParams(array('email'));
 
-		if (!($user = $this->Mdl_Users->get($_POST["user"])))	parent::returnWithErr("User id is not valid.");
+		$users = $this->Mdl_Users->getAll("email", $_POST["email"]);
 
-		$hash = hash('tiger192,3', $user->username);
+		if (!($user = $users[0]))	parent::returnWithErr("User email is not valid.");
 
-		
+		$hash = hash('tiger192,3', $user->username . date("y-d-m-h-m-s"));
+		$baseurl = $this->config->base_url();
+
+		$this->load->model('Mdl_Tokens');
+		$this->Mdl_Tokens->create(array(
+			"token" => $hash,
+			"user" => $user->id
+			));
 
 
+		$content = '
+		<html><head><base target="_blank">
+				<style type="text/css">
+				::-webkit-scrollbar{ display: none; }
+				</style>
+				<style id="cloudAttachStyle" type="text/css">
+				#divNeteaseBigAttach, #divNeteaseBigAttach_bak{display:none;}
+				</style>
+				            <style type="text/css">
+				                img {
+				                    border: 0;
+				                    height: auto;
+				                    outline: none;
+				                    text-decoration: none;
+				                }
+
+				                body {
+				                    height: 100% !important;
+				                    margin: 0;
+				                    padding: 0;
+				                    width: 100% !important;
+				                }
+
+				                img {
+				                    -ms-interpolation-mode: bicubic;
+				                }
+
+				                .ReadMsgBody {
+				                    width: 100%;
+				                }
+
+				                .ExternalClass {
+				                    width: 100%;
+				                }
+
+				                body {
+				                    -ms-text-size-adjust: 100%;
+				                    -webkit-text-size-adjust: 100%;
+				                }
+
+				                .ExternalClass {
+				                    line-height: 100%;
+				                }
+
+				                img {
+				                    max-width: 100%;
+				                }
+
+				                body {
+				                    -webkit-font-smoothing: antialiased;
+				                    -webkit-text-size-adjust: none;
+				                    width: 100% !important;
+				                    height: 100%;
+				                    line-height: 1.6;
+				                }
+
+				                body {
+				                    background-color: #f3f3f3;
+				                }
+
+				                img {
+				                    border-radius: 12px;
+				                }
+
+				                img {
+				                    width: 100%;
+				                }
+
+				                _media screen and (min-width: 768px) {
+				                    [class="emailContainer"] {
+				                        width: 585px !important;
+				                    }
+
+				                    #emailLogo {
+				                        max-width: 200px;
+				                    }
+
+				                    #emailPreview {
+				                        max-width: 440px;
+				                    }
+
+				                    [class="flexibleColumn"] {
+				                        width: 50% !important;
+				                    }
+
+				                    [class="flexibleGrid"] {
+				                        width: 33% !important;
+				                    }
+				                
+				                }
+
+				                _media screen and (max-width: 768px) {
+				                    [id="emailPreview"] {
+				                        max-width: 100% !important;
+				                        width: 100% !important;
+				                    }
+
+				                    [id="emailLogo"] {
+				                        max-width: 100% !important;
+				                        width: 100% !important;
+				                    }
+
+				                    [class="flexibleColumn"] {
+				                        max-width: 50% !important;
+				                        width: 100% !important;
+				                    }
+
+				                    [class="flexibleGrid"] {
+				                        max-width: 33% !important;
+				                    }
+
+				                    [id="bodyTable"] {
+				                        width: 100% !important;
+				                    }
+
+				                    [id="bodyCell"] {
+				                        width: 100% !important;
+				                    }
+
+				                    [class="emailContainer"] {
+				                        width: 100% !important;
+				                    }
+
+				                    [id="emailPreview"] {
+				                        max-width: 100% !important;
+				                        width: 100% !important;
+				                    }
+
+				                    [id="emailLogo"] {
+				                        max-width: 100% !important;
+				                        width: 100% !important;
+				                    }
+
+				                    [id="previewContent"] {
+				                        text-align: center !important;
+				                    }
+
+				                    [id="logoContent"] {
+				                        text-align: center !important;
+				                    }
+
+				                    [id="logo"] {
+				                        text-align: center !important;
+				                    }
+
+				                    [class="cta-blue"] {
+				                        padding: 0 !important;
+				                    }
+
+				                        [class="cta-blue"] a {
+				                            padding: 10px 40px !important;
+				                        }
+
+				                    [class="cta-blue-gradient"] {
+				                        padding: 0 !important;
+				                    }
+
+				                        [class="cta-blue-gradient"] a {
+				                            padding: 15px 60px !important;
+				                        }
+				               span[class="spnText"] {display:block !important; word-wrap:break-word !important; width:245px !important; padding:0 7px !important; margin:0 auto !important;}
+				                    span[class="spnText1"] {display:block !important; word-wrap:break-word !important; width:255px !important; padding:0 2px !important;margin:0 auto !important;}
+				                    td[class="footer"] table {width: 320px !important; padding: 0 20px !important; }
+				                }
+
+				                _media only screen and (max-width: 480px) {
+				                    body {
+				                        width: 100% !important;
+				                        min-width: 100% !important;
+				                    }
+
+				                    [id="emailPreheader"] .emailContainer td {
+				                        padding-bottom: 0 !important;
+				                    }
+
+				                        [id="emailPreheader"] .emailContainer td.rightCol {
+				                            padding: 10px 0 !important;
+				                        }
+
+				                    [class="flexibleColumn"] {
+				                        max-width: 100% !important;
+				                        width: 100% !important;
+				                    }
+
+				                        [class="flexibleColumn"] td {
+				                            text-align: center !important;
+				                            padding: 0 0 10px 0 !important;
+				                        }
+
+				                    [class="flexibleGrid"] {
+				                        max-width: 50% !important;
+				                    }
+
+				                    [class="footerContent"] br {
+				                        display: none !important;
+				                        line-height:10px !important;
+				                    }
+
+				                    [id="emailPreview"] {
+				                        display: none !important;
+				                        visibility: hidden !important;
+				                    }
+
+				                    [class="headerButton"] {
+				                        width: 50% !important;
+				                        padding-bottom: 15px !important;
+				                    }
+
+				                    [class="headerButtonContent"] {
+				                        font-size: 22px !important;
+				                        padding: 0 !important;
+				                    }
+
+				                        [class="headerButtonContent"] a {
+				                            padding: 20px !important;
+				                        }
+
+				                    [id="emailGrid"] .emailContainer {
+				                        max-width: 80% !important;
+				                    }
+
+				                    [class="articleContent"] {
+				                        text-align: center !important;
+				                    }
+
+				                        [class="articleContent"] h3 {
+				                            text-align: center !important;
+				                        }
+
+				                        [class="articleContent"] h5 {
+				                            text-align: center !important;
+				                        }
+
+				                    [class="articleButton"] {
+				                        margin: 0 auto !important;
+				                        width: 50% !important;
+				                    }
+
+				                    [class="articleButtonContent"] {
+				                        font-size: 22px !important;
+				                        padding: 0 !important;
+				                    }
+
+				                        [class="articleButtonContent"] a {
+				                            padding: 20px !important;
+				                        }
+				                    span[class="spnText"] {display:block !important; word-wrap:break-word !important; width:245px !important; padding:0 7px !important; margin:0 auto !important;}
+				                    span[class="spnText1"] {display:block !important;  width:258px !important; padding:0 2px !important;margin:0 auto !important;}
+				                    td[class="footer"] table {width: 320px !important; padding: 0 20px !important; }
+				                    span[class="resize"]{width:100% !important; display: inline-block !important;}
+				                }
+				            </style>
+				            </head><body><center style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                <table id="bodyTable" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; height: 100% !important; margin: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed; width: 100% !important" align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+				                    <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                        <td id="bodyCell" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; height: 100% !important; margin: 0; mso-line-height-rule: exactly; padding: 0; vertical-align: top; width: 100% !important" align="center" valign="top">
+				                            
+				                            <table style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+				                                <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                    <td id="emailPreheader" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-line-height-rule: exactly; padding: 0; vertical-align: top" align="center" valign="top">
+				                                        <table class="emailContainer" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-bottom-color: #dcdcdc; border-bottom-style: solid; border-bottom-width: 2px; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; max-width: 585px; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" cellpadding="0" cellspacing="0" width="100%">
+				                                            <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-line-height-rule: exactly;  text-align: left; vertical-align: top" align="left" valign="top">
+				                                                    
+				                                                    <table class="flexibleColumn" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; max-width: 320px; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="left" border="0" cellpadding="0" cellspacing="0">
+				                                                        <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                            <td style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-line-height-rule: exactly; padding: 15px 0 10px; text-align: left; vertical-align: top" align="left" valign="top">
+				                                                               <font size="8" color="#3db01a" style="font-size:40px;"><b>DAF</b></font>
+				                                                            </td>
+				                                                        </tr>
+				                                                    </tbody></table>
+				                                                    
+				                                                    <table class="flexibleColumn" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; max-width: 320px; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="right" cellpadding="0" cellspacing="0">
+				                                                        <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                            <td class="rightCol" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; color: #999999; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-line-height-rule: exactly; padding: 25px 0 10px; text-align: right; vertical-align: top" align="right" valign="top">
+				                                                                Reset&nbsp;your&nbsp;password.
+				                                                            </td>
+				                                                        </tr>
+				                                                    </tbody></table>
+				                                                    
+				                                                </td>
+				                                            </tr>
+				                                        </tbody></table>
+				                                    </td>
+				                                </tr>
+
+				                                <tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                    <td id="emailHeader" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; mso-line-height-rule: exactly; padding: 0; vertical-align: top" align="center" valign="top">
+				                                        <table class="emailContainer" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; max-width: 585px; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+				                                            <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                <td class="content" style="-ms-text-size-adjust: 100%;  -webkit-text-size-adjust: 100%; box-sizing: border-box; display: block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0 auto; max-width: 640px; mso-line-height-rule: exactly; padding: 20px 20px 0; text-align: center; vertical-align: top" align="center" valign="top">
+				                                                    <h1 style="box-sizing: border-box; color: #39b449; display: block !important; font-family: Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif; font-size: 22px; font-weight: bold; line-height: 1.2;  padding: 0 0 15px;">It'."'".'s&nbsp;OK&nbsp;to&nbsp;forget.</h1>
+				                                                    <span class="spnText">Just&nbsp;click&nbsp;the&nbsp;link&nbsp;below&nbsp;<strong>within&nbsp;24&nbsp;hours&nbsp;</strong>to&nbsp;reset&nbsp;your&nbsp;password.</span>
+				                                                    <br style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0"><br style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                    <table class="cta" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; border-collapse: collapse; box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding: 0; table-layout: fixed" align="center" cellpadding="0" cellspacing="0">
+				                                                        <tbody><tr style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                            <td class="cta-blue-gradient" style="-moz-border-radius: 4px; -ms-text-size-adjust: 100%; -webkit-border-radius: 4px; -webkit-text-size-adjust: 100%; background: #1574bb linear-gradient(top, #2a87c7, #1a6599); border-radius: 4px; box-sizing: border-box; color: #FFFFFF; display: inline-block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 22px; font-weight: normal; line-height: 22px; margin: 0; mso-line-height-rule: exactly; padding: 15px 60px; text-align: center; text-decoration: none; vertical-align: top" align="center" bgcolor="#1574bb" valign="top">
+				                                                                <a target="_blank" href="'. $baseurl . '/adminlogin/forgotpassword?token='. $hash .'" style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; box-sizing: border-box; color: #FFFFFF; display: block; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 1px; margin: 0; mso-line-height-rule: exactly; padding: 0; text-decoration: none; text-shadow: 0px -1px 2px #333333">Reset&nbsp;Password</a>
+				                                                            </td>
+				                                                        </tr>
+				                                                    </tbody></table>
+				                                                    <br style="box-sizing: border-box; font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; padding: 0">
+				                                                    <span class="spnText1">
+				                                                        For&nbsp;your&nbsp;security,&nbsp;this&nbsp;link&nbsp;expires&nbsp;in<span class="resize">&nbsp;24&nbsp;hours.</span>
+				                                                    </span>
+				                                                </td>
+				                                            </tr>
+				                                        </tbody></table>
+				                                    </td>
+				                                </tr>
+
+				                            </tbody></table>
+				                            
+				                        </td>
+				                    </tr>
+				                </tbody></table>
+				            </center> 
+
+				<style type="text/css">
+				body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:0;margin:0;overflow:auto;white-space:normal;word-wrap:break-word;min-height:100px}
+				td, input, button, select, body{font-family:Helvetica, "Microsoft Yahei", verdana}
+				pre {white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;width:95%}
+				th,td{font-family:arial,verdana,sans-serif;line-height:1.666}
+				img{ border:0}
+				header,footer,section,aside,article,nav,hgroup,figure,figcaption{display:block}
+				</style>
+
+				<style id="ntes_link_color" type="text/css">a,td a{color:#064977}</style>
+				</body></html>
+		';
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -145,9 +485,9 @@ class Users extends Api_Unit {
 		      'https://api.mailgun.net/v3/sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org/messages');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 
 		        array('from' => 'Dwight Schrute <postmaster@sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org>',
-		              'to' => 'Michael Scott <wangyinxing19@gmail.com>',
-		              'subject' => 'The Printer Caught Fire',
-		              'text' => 'We have a problem.'));
+		              'to' => $user->username . ' <' . $user->email . '>',
+		              'subject' => "You have forgot your passowrd.",
+		              'text' => $content));
 		$result = curl_exec($ch);
 		curl_close($ch);
 		print_r($result);

@@ -81,6 +81,13 @@ class Mdl_Campus extends CI_Model {
 		$this->db->delete($this->table, array('id' => $id));
 	}
 
+	public function updateEx($id, $arrValues) {
+		$this->db->from($this->table);
+		$this->db->where("id", $id);
+
+		$this->db->update($this->table, $arrValues);
+	}
+
 	public function addToStrArray($val, $strArray) {
 		$result = array();
 

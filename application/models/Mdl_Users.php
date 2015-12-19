@@ -28,7 +28,7 @@ Class Mdl_Users extends Mdl_Campus {
 		$data = array(
 			'email'=> $email,
 			'username'=> $username,
-			'password'=> md5($password),
+			'password'=> $password,
 			'fullname'=> $fullname,
 			'church'=> $church,
 			'province'=> $province,

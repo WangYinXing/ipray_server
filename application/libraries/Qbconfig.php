@@ -16,6 +16,8 @@ define('QB_PATH_AUTH', "auth.json");
 define('QB_PATH_LOGIN', "login.json");
 define('QB_PATH_EVENTS', "events.json");
 
+define('QB_DEFAULT_PASSWORD', "LetusprayforGod!_ipray2015");
+
 
 class Qbconfig {
 

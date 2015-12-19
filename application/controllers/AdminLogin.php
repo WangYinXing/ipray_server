@@ -23,6 +23,7 @@ class AdminLogin extends Home_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model('Mdl_AdminUsers', '', TRUE);
+		$this->load->helper('form');
 	}
 
 	public function index() {
@@ -36,7 +37,7 @@ class AdminLogin extends Home_Controller {
 	function show_login( $show_error = false ) {
 	    $data['error'] = $show_error;
 
-	    $this->load->helper('form');
+	    //$this->load->helper('form');
 	    $this->load->view('adminlogin',$data);
 	}
 
@@ -56,6 +57,68 @@ class AdminLogin extends Home_Controller {
 		  // Otherwise show the login screen with an error message.
 		  $this->show_login(true);
 		}
+	}
+
+	public function forgotpassword() {
+		$data['error'] = "";
+
+		if (!isset($_GET["token"])) {
+			$data["error"] = "Sorry. Your token has been expired or invalid.";
+			$this->load->view('invalidtoken',$data);
+			return;
+		}
+
+		$data['token'] = $token = $_GET["token"];
+
+		$this->load->model("Mdl_Tokens");
+
+		$tokenRecords = $this->Mdl_Tokens->getAll("token", $token);
+
+		if (count($tokenRecords) == 0) {
+			$data["error"] = "Sorry. Your token has been expired or invalid.";
+			$this->load->view('invalidtoken',$data);
+			return;
+		}
+
+		$this->load->view('resetpassword',$data);
+		
+	}
+
+	public function resetpassword() {
+		$token = $data['token'] = $_POST["token"];
+
+		if (!isset($_POST["password"]) || !isset($_POST["confirmpassword"])) {
+			$data['error'] = "Please input password and confirm.";
+			$this->load->view('resetpassword',$data);
+			return;
+		}
+
+		if ($_POST["password"] != $_POST["confirmpassword"]) {
+			$data['error'] = "Confirm password doesn't match.";
+			$this->load->view('resetpassword',$data);
+			return;
+		}
+
+		$this->load->model("Mdl_Tokens");
+
+		$tokenRecords = $this->Mdl_Tokens->getAll("token", $token);
+
+		if (count($tokenRecords) == 0) {
+			$data['error'] = "Sorry. Your token has been expired or invalid.";
+			$this->load->view('invalidtoken',$data);
+			return;
+		}
+
+		$this->load->model("Mdl_Users");
+
+		$user = $this->Mdl_Users->get($tokenRecords[0]->user);
+
+		$this->Mdl_Users->updateEx($user->id, array("password" => md5($_POST["password"])));
+
+		$this->Mdl_Tokens->remove($tokenRecords[0]->id);
+
+		$data['success'] = "Your password has been reset. You can login with new password immediately.";
+		$this->load->view('success',$data);
 	}
 
 	public function logout() {
