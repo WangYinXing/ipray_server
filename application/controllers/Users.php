@@ -99,6 +99,10 @@ class Users extends Api_Unit {
 
 		$users = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
 
+		if (count($users) == 0)	parent::returnWithErr("User not found.");
+
+		$user = $users[0];
+
 		if ($user->password != md5($_POST["password"]))			parent::returnWithErr("Invalid password.");
 
 
