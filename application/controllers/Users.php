@@ -740,6 +740,17 @@ class Users extends Api_Unit {
 				'status' => $status
 				));
 
+
+		$this->load->model('Mdl_Notifications');
+		$noti =	$this->Mdl_Notifications->create(array(
+				'subject' => $_POST['subject'],
+				'message' => $msg,
+				'sender' => $sender->id,
+				'receiver' => $receiver->id,
+				'meta' => json_encode(array('request' => $request))
+		));
+
+
 		$payload = array(
 			'sound' => "default",
 			'subject' => $_POST['subject'],
@@ -748,21 +759,13 @@ class Users extends Api_Unit {
 			'receiver' => $receiver,
 			'request' => $request,
 			'pray_id' => $pray['id'],
+			'notification' => $noti->id,
 			'meta' => json_encode(array('request' => $request))
 			);
 
 
 
 		if (($failedCnt = $this->qbhelper->sendPN($host->devicetoken, json_encode($payload))) == 0) {
-			$this->load->model('Mdl_Notifications');
-			$this->Mdl_Notifications->create(array(
-				'subject' => $_POST['subject'],
-				'message' => $msg,
-				'sender' => $sender->id,
-				'receiver' => $receiver->id,
-				'meta' => json_encode(array('request' => $request))
-				));
-
 			parent::returnWithoutErr("Contact request has been sent successfully.");
 		}
 		else {
