@@ -136,19 +136,14 @@ class Users extends Api_Unit {
 									<table border="0" cellpadding="40" cellspacing="0" width="576" class="container" align="center"> 
 										<tbody><tr><td class="daWrap">
 											<table width="80%" cellpadding="0" cellspacing="0" border="0" align="center" class="content">
-												<tbody><tr><td width="120" align="left" valign="top" class="mobile-hidden">
-														<table width="110" height="130" cellpadding="0" cellspacing="0" border="0" align="left">
-															<tbody><tr><td align="center" valign="middle" background="http://images.match.com/match/profile/verification/email/photo-shadow.png">
-																<img src="http://sthumbnails.match.com/sthumbnails/00/25/207690025Z.jpeg" width="78" height="98" border="1" style="display:block;border: solid 1px white;"></td></tr>
-														</tbody></table>
-													</td>
+												<tbody><tr>
 													<td align="left" valign="top" style="padding-top:15px;" class="content-center"><font face="Helvetica, Arial, sans-serif" size="3" color="black" style="font-size: 16px;">
 														<font size="4" color="#3db01a" style="font-size:22px;"><b>You are almost verified.</b></font><br><br>
 														People are looking for someone they can trust. With a verified email, you"ll be instantly more approachable. Just click the link to finish up.</font>
 														<br><br>
 														<table cellspacing="0" cellpadding="0" align="left" class="cta">
 															<tbody><tr><td style="font-size: 17px; color: white; background: #1a6599; background-image: -moz-linear-gradient(top, #2b88c8, #1a6599); background-image: -ms-linear-gradient(top, #2b88c8, #1a6599); background-image: -o-linear-gradient(top, #2b88c8, #1a6599); background-image: -webkit-gradient(linear, center top, center bottom, from(#2b88c8), to(#1a6599)); background-image: -webkit-linear-gradient(top, #2b88c8, #1a6599); background-image: linear-gradient(top, #2b88c8, #1a6599); text-decoration: none; font-weight: normal; display: inline-block; line-height: 25px; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;  padding: 10px 40px; ">
-																<font face="Helvetica, Arial, sans-serif"><a href="'. $baseurl .'Adminlogin/verify?token=' . $hash . '" style="color: #FFFFFF; text-decoration: none; text-shadow: 0px -1px 2px #333333; letter-spacing: 1px; display: block;">Verify Your Email</a></font>
+																<font face="Helvetica, Arial, sans-serif"><a href="'. $baseurl .'AdminLogin/verify?token=' . $hash . '" style="color: #FFFFFF; text-decoration: none; text-shadow: 0px -1px 2px #333333; letter-spacing: 1px; display: block;">Verify Your Email</a></font>
 															</td></tr>
 														</tbody></table>
 												</td></tr>
