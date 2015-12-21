@@ -759,7 +759,7 @@ class Users extends Api_Unit {
 			'receiver' => $receiver,
 			'request' => $request,
 			'pray_id' => $pray['id'],
-			'notification' => $noti->id,
+			'id' => $noti->id,
 			'meta' => json_encode(array('request' => $request))
 			);
 
