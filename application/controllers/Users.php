@@ -721,7 +721,7 @@ class Users extends Api_Unit {
 			$status = 0;
 		}
 		else if ($_POST['subject'] == 'ipray_answerprayrequest') {
-			$msg = $prayer->username . " accepted your pray request.";
+			$msg = $host->username . " accepted your pray request.";
 
 			$sender = $host;
 			$receiver = $prayer;
