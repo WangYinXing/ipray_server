@@ -59,6 +59,37 @@ class AdminLogin extends Home_Controller {
 		}
 	}
 
+	public function verify() {
+		$data['error'] = "";
+
+		if (!isset($_GET["token"])) {
+			$data["error"] = "Sorry. Your token has been expired or invalid.";
+			$this->load->view('invalidtoken',$data);
+			return;
+		}
+
+		$data['token'] = $token = $_GET["token"];
+
+		$this->load->model("Mdl_Tokens");
+
+		$tokenRecords = $this->Mdl_Tokens->getAll("token", $token);
+
+		if (count($tokenRecords) == 0) {
+			$data["error"] = "Sorry. Your token is illegal.";
+			$this->load->view('invalidtoken',$data);
+			return;
+		}
+
+		$this->load->model("Mdl_Users");
+		$user = $this->Mdl_Users->get($tokenRecords[0]->user);
+
+		$this->Mdl_Users->updateEx($user->id, array("verified" => 1));
+		$this->Mdl_Tokens->remove($tokenRecords[0]->id);
+
+		$data['success'] = "Your account has been verified. You can login now.";
+		$this->load->view('success',$data);
+	}
+
 	public function forgotpassword() {
 		$data['error'] = "";
 

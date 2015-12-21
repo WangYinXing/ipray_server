@@ -85,33 +85,154 @@ class Users extends Api_Unit {
 			parent::returnWithErr($this->qbhelper->latestErr);
 		}
 
+		$hash = hash('tiger192,3', $newUser['username'] . date("y-d-m-h-m-s"));
+		$baseurl = $this->config->base_url();
+
+		$this->load->model('Mdl_Tokens');
+		$this->Mdl_Tokens->create(array(
+			"token" => $hash,
+			"user" =>  $newUser['id']
+			));
+
+		$content = '<html><head><base target="_blank">
+							<style type="text/css">
+							::-webkit-scrollbar{ display: none; }
+							</style>
+							<style id="cloudAttachStyle" type="text/css">
+							#divNeteaseBigAttach, #divNeteaseBigAttach_bak{display:none;}
+							</style>
+							<style type="text/css">
+							.ReadMsgBody{ width: 100%;} 
+							.ExternalClass {width: 100%;} 
+							.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;}  
+							p { margin: 1em 0;} 
+							table td { border-collapse: collapse;}  
+							_-ms-viewport{ width: device-width;}
+							_media screen and (max-width: 480px) {
+								html,body { width: 100%; overflow-x: hidden;}
+								table[class="container"] { width:320px !important; padding: 0 !important; }
+								table[class="content"] { width:100% !important; }
+								td[class="mobile-center"] { text-align: center !important; }
+								td[class="content-center"] { text-align: center !important; padding: 0 !important;  }
+								td[class="frame"] {padding: 0 !important;}
+								[class="mobile-hidden"] {display:none !important;}
+								table[class="cta"]{width: 100% !important;}
+								table[class="cta"] td{display: block !important; text-align: center !important;}
+							    *[class="daWrap"] {padding: 20px 15px !important;}
+							}
+							</style>
+
+
+							</head><body><table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<tbody><tr><td class="frame" bgcolor="#f3f3f3">
+									<table width="576" border="0" cellpadding="10" cellspacing="0" class="container" align="center">
+										<tbody><tr><td style="padding-left:5px;border-bottom: solid 2px #dcdcdc;" class="mobile-center"><font face="Helvetica, Arial, sans-serif" size="3" color="black" style="font-size: 16px;">
+														<font size="4" color="#3db01a" style="font-size:40px;"><b>iPray</b></font>
+										</td></tr>
+									</tbody></table>
+								</td></tr>
+								<tr><td class="frame" bgcolor="#f3f3f3"><div align="center">
+									
+									<table border="0" cellpadding="40" cellspacing="0" width="576" class="container" align="center"> 
+										<tbody><tr><td class="daWrap">
+											<table width="80%" cellpadding="0" cellspacing="0" border="0" align="center" class="content">
+												<tbody><tr><td width="120" align="left" valign="top" class="mobile-hidden">
+														<table width="110" height="130" cellpadding="0" cellspacing="0" border="0" align="left">
+															<tbody><tr><td align="center" valign="middle" background="http://images.match.com/match/profile/verification/email/photo-shadow.png">
+																<img src="http://sthumbnails.match.com/sthumbnails/00/25/207690025Z.jpeg" width="78" height="98" border="1" style="display:block;border: solid 1px white;"></td></tr>
+														</tbody></table>
+													</td>
+													<td align="left" valign="top" style="padding-top:15px;" class="content-center"><font face="Helvetica, Arial, sans-serif" size="3" color="black" style="font-size: 16px;">
+														<font size="4" color="#3db01a" style="font-size:22px;"><b>You are almost verified.</b></font><br><br>
+														People are looking for someone they can trust. With a verified email, you"ll be instantly more approachable. Just click the link to finish up.</font>
+														<br><br>
+														<table cellspacing="0" cellpadding="0" align="left" class="cta">
+															<tbody><tr><td style="font-size: 17px; color: white; background: #1a6599; background-image: -moz-linear-gradient(top, #2b88c8, #1a6599); background-image: -ms-linear-gradient(top, #2b88c8, #1a6599); background-image: -o-linear-gradient(top, #2b88c8, #1a6599); background-image: -webkit-gradient(linear, center top, center bottom, from(#2b88c8), to(#1a6599)); background-image: -webkit-linear-gradient(top, #2b88c8, #1a6599); background-image: linear-gradient(top, #2b88c8, #1a6599); text-decoration: none; font-weight: normal; display: inline-block; line-height: 25px; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;  padding: 10px 40px; ">
+																<font face="Helvetica, Arial, sans-serif"><a href="'. $baseurl .'Adminlogin/verify?token=' . $hash . '" style="color: #FFFFFF; text-decoration: none; text-shadow: 0px -1px 2px #333333; letter-spacing: 1px; display: block;">Verify Your Email</a></font>
+															</td></tr>
+														</tbody></table>
+												</td></tr>
+											</tbody></table>
+											<table width="80%" cellpadding="5" cellspacing="0" border="0" align="center" class="content">
+												<tbody><tr><td>&nbsp;</td></tr>
+												<tr><td align="center" style="border-bottom: solid 1px #dcdcdc;"><font face="Helvetica, Arial, sans-serif" size="2" color="#777" style="font-size: 13px;">
+													<b>Questions?</b> Take a look at our <a href="http://www.match.com/help/help.aspx?emailid=b8ba94ac-4dfc-4b5d-9cff-165003e5e85c" target="_blank" style="color:#488ac9;">FAQs</a>, or contact<a href="http://www.match.com/help/help.aspx?emailid=b8ba94ac-4dfc-4b5d-9cff-165003e5e85c" target="_blank" style="color:#488ac9;"> Customer Care</a>.</font>
+												</td></tr>
+											</tbody></table>
+										</td></tr>
+										<tr><td align="center" style="padding:15px;"><font face="Arial, sans-serif" size="2" color="#333333" style="font-size:12px;">
+											<em>Please add <a href="mailto:mailer@connect.match.com">mailer@connect.match.com</a> to your address book to ensure our emails reach your inbox.</em><br><br>
+							                                                       Please do not reply to this email. Replies will not be received. If you have a question, or need assistance, please contact<a href="http://www.match.com/help/help.aspx?emailid=b8ba94ac-4dfc-4b5d-9cff-165003e5e85c" target="_blank" style="color:#8a8a8a;"> Customer Service</a>.</font></td>
+										</tr>
+									</tbody></table>
+									
+								</div></td></tr>
+							</tbody></table>
+
+							<img src="http://www.match.com/email/open.aspx?EmailID=b8ba94ac-4dfc-4b5d-9cff-165003e5e85c&amp;SrcSystem=3" width="1" height="1" border="0">
+							<span style="padding: 0px;"></span>
+
+							 
+
+							<style type="text/css">
+							body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:0;margin:0;overflow:auto;white-space:normal;word-wrap:break-word;min-height:100px}
+							td, input, button, select, body{font-family:Helvetica, "Microsoft Yahei", verdana}
+							pre {white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;width:95%}
+							th,td{font-family:arial,verdana,sans-serif;line-height:1.666}
+							img{ border:0}
+							header,footer,section,aside,article,nav,hgroup,figure,figcaption{display:block}
+							</style>
+
+							<style id="ntes_link_color" type="text/css">a,td a{color:#064977}</style>
+							</body></html>';
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+		curl_setopt($ch, CURLOPT_USERPWD, 'api:key-061710f7633b3b2e2971afade78b48ea');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_URL, 
+		      'https://api.mailgun.net/v3/sandboxa8b6f44a159048db93fd39fc8acbd3fa.mailgun.org/messages');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 
+		        array('from' => 'noreply@iPray1.com <postmaster@ipray1.com>',
+		              'to' => $newUser['username'] . ' <' . $newUser['email'] . '>',
+		              'subject' => "You have forgot your passowrd.",
+		              'html' => $content));
+		$result = curl_exec($ch);
+		curl_close($ch);
+
 		/*
 			Now we should register qb user at first.....
 		*/
-		parent::returnWithoutErr("User has been created successfully.", $newUser);
+		parent::returnWithoutErr("User has been created successfully. Please verfiy your account from verification email.", $newUser);
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
 		Sign in...
 	_________________________________________________________________________________________________________*/
 	public function api_entry_signin() {
-		parent::validateParams(array('qbid', 'token', 'password'));
+		parent::validateParams(array('email', 'password'));
 
-		$users = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
+		$users = $this->Mdl_Users->getAll("email", $_POST["email"]);
 
 		if (count($users) == 0)	parent::returnWithErr("User not found.");
 
 		$user = $users[0];
 
+		if (!$user->verified)									parent::returnWithErr("This account is not verified yet.");
 		if ($user->password != md5($_POST["password"]))			parent::returnWithErr("Invalid password.");
 
+		parent::returnWithoutErr("Signin succeed.", $user);
+	}
 
-		if (count($users) == 0)
-			parent::returnWithErr("QBID is not valid. maybe not found corresponding user from qbid.");
-		
+	public function api_entry_authqb() {
+		parent::validateParams(array('token', 'qbid'));
+
+		$users = $this->Mdl_Users->getAll("qbid", $_POST["qbid"]);
+
 		$user = $this->Mdl_Users->signin($_POST["qbid"], $_POST["token"]);
 
-		parent::returnWithoutErr("Signin succeed.", $user);
+		parent::returnWithoutErr("Authenticated in QB.", $user);
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
@@ -123,8 +244,6 @@ class Users extends Api_Unit {
 		if (!$this->Mdl_Users->get($_POST["user"]))	parent::returnWithErr("User id is not valid.");
 		
 		$this->Mdl_Users->signout($_POST["user"]);
-
-		//if ($user == null)			parent::returnWithErr("Invalidation token failed.");
 
 		parent::returnWithoutErr("Signout succeed.");
 	}
@@ -492,7 +611,6 @@ class Users extends Api_Unit {
 		              'html' => $content));
 		$result = curl_exec($ch);
 		curl_close($ch);
-		print_r($result);
 	}
 
 	/*--------------------------------------------------------------------------------------------------------
@@ -651,20 +769,16 @@ class Users extends Api_Unit {
 		}
 		else if ($_POST['subject'] == 'ipray_acceptprayrequest') {
 			parent::validateParams(array('request'));
-
-			
 		}
 		else if ($_POST['subject'] == 'ipray_rejectprayrequest') {
 			parent::validateParams(array('request'));
-
-			
 		}
 		else {
 			parent::returnWithErr("Unknown subject is requested.");
 		}
 
-		if ($receiver->devicetoken == "" || !isset($receiver->devicetoken))
-			parent::returnWithErr("User didn't subscribe.");
+		if (!isset($receiver->devicetoken) || $receiver->devicetoken == "")
+			parent::returnWithErr("User is not available at this moment. Please try again later.");
 
 		$payload = array(
 			'sound' => "default",
