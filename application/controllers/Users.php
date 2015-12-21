@@ -759,13 +759,13 @@ class Users extends Api_Unit {
 			'receiver' => $receiver,
 			'request' => $request,
 			'pray_id' => $pray['id'],
-			'id' => $noti->id,
+			'id' => $noti['id'],
 			'meta' => json_encode(array('request' => $request))
 			);
 
 
 
-		if (($failedCnt = $this->qbhelper->sendPN($host->devicetoken, json_encode($payload))) == 0) {
+		if (($failedCnt = $this->qbhelper->sendPN($receiver->devicetoken, json_encode($payload))) == 0) {
 			parent::returnWithoutErr("Contact request has been sent successfully.");
 		}
 		else {
