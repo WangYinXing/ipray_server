@@ -1,6 +1,6 @@
 
 body {
-	background-color: #222d32 !important;
+	background: #6CA590;
 }
 
 .login-logo > img{
@@ -13,4 +13,246 @@ body {
 
 .hidden {
 	display: none;
+}
+
+
+
+
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+}
+
+/* checkbox aspect */
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before {
+  content: '';
+  position: absolute;
+  left:0; top: 2px;
+  width: 17px; height: 17px;
+  border: 1px solid #aaa;
+  background: #f8f8f8;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+}
+/* checked mark aspect */
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+  content: '✔';
+  position: absolute;
+  top: 3px; left: 4px;
+  font-size: 18px;
+  line-height: 0.8;
+  color: #09ad7e;
+  transition: all .2s;
+}
+/* checked mark aspect changes */
+[type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+/* disabled checkbox */
+[type="checkbox"]:disabled:not(:checked) + label:before,
+[type="checkbox"]:disabled:checked + label:before {
+  box-shadow: none;
+  border-color: #bbb;
+  background-color: #ddd;
+}
+[type="checkbox"]:disabled:checked + label:after {
+  color: #999;
+}
+[type="checkbox"]:disabled + label {
+  color: #aaa;
+}
+/* accessibility */
+[type="checkbox"]:checked:focus + label:before,
+[type="checkbox"]:not(:checked):focus + label:before {
+  border: 1px dotted blue;
+}
+
+/* hover style just for information */
+label:hover:before {
+  border: 1px solid #4778d9!important;
+}
+
+.input-error {
+	border: 2px solid red;
+    background: rgba(255, 0, 0, 0.06);
+}
+
+
+.flexigrid div.tDiv {
+  display: none;
+}
+
+/*
+  Selected....
+*/
+.flexigrid div.bDiv tr.trSelected:hover td, .flexigrid div.bDiv tr.trSelected:hover td.sorted, .flexigrid div.bDiv tr.trOver.trSelected td.sorted, .flexigrid div.bDiv tr.trOver.trSelected td, .flexigrid tr.trSelected td.sorted, .flexigrid tr.trSelected td {
+  background: #85BBA7;
+  color: white;
+  border: none;
+  line-height: 2em;
+}
+
+
+/*
+  Hover....
+*/
+.flexigrid div.bDiv tr:hover td, .flexigrid div.bDiv tr:hover td.sorted, .flexigrid div.bDiv tr.trOver td.sorted, .flexigrid div.bDiv tr.trOver td {
+  background: #AADCC9;
+  //color: white;
+  border: none;
+  line-height: 2em;
+}
+
+.flexigrid div.bDiv td {
+  line-height: 2em;
+  border: none;
+}
+
+.grid-toolbar {
+  height: 40px;
+  width:100%;
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+.btn-girdtoolbar {
+  width: 200px;
+  background: #6CA590;
+  color: white;
+  border:1px solid rgba(255, 255, 255, 0.35);
+}
+
+.btn-girdtoolbar:hover {
+  background: #4A8670;
+  color: white;
+}
+
+.content-wrapper {
+  background: #6CA590;
+  color: #222D32;
+  min-height: 1000px;
+}
+
+.content-header>h1 {
+  margin-bottom: 0.5em;
+  font-size: 24px;
+  border-bottom: solid 1px white;
+  color: white;
+}
+
+.content-header>h1>small {
+  color: white;
+}
+
+.flexigrid div.mDiv {
+  color: white;
+  background: none;
+  border: none;
+}
+
+.ipray-footer {
+  position:absolute;
+  bottom: 0px;
+}
+
+.req-list-header {
+  background: #46826B;
+  color: white;
+}
+
+.req-feed-img {
+  height:150px;
+  width: auto;
+}
+
+.req-feed-vid {
+  height: 150px;
+  width: auto;
+}
+
+.req-row {
+  color: white;
+}
+
+.req-list-header th {
+  text-align: left;
+  padding: 5px;
+}
+
+.req-list {
+  border: 1px solid #46826B;
+  width: 100%;
+}
+
+.req-row td {
+  padding: 5px;
+  border-top: 1px solid #46826B;
+  border-bottom: 1px solid #46826B;
+}
+
+.table {
+  display:table;
+  border-collapse: collapse;
+}
+
+.table a:link {
+}
+
+a:hover, a:active, a:focus {
+  color: #FFF823;
+}
+
+.table-row {
+  display:table-row;
+  border: 1px solid #46826B;
+}
+.table-cell {
+  display:table-cell;
+  padding:5px;
+}
+
+.deadlink {
+  pointer-events: none;
+  cursor: default;
+}
+
+.req-content {
+  margin-left:1em;
+}
+
+.req-commenter {
+  color: #F0FF05;
+}
+
+.req-comment {
+  font-size:1.3em;
+}
+
+.req-content label{
+  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.42);
+  width: 70%;
+}
+
+.email-subject {
+  color: black;
+  padding:0.5em;
+  width: 80%;
+}
+
+.email-subject:focus {
 }

@@ -1,10 +1,20 @@
 
 .skin-blue .main-header .logo,.skin-blue .main-header .navbar{
-	background-color: #222D32;
+	background-color: #6CA590;
 }
 
 .skin-blue .main-header .logo:hover,.skin-blue .main-header .navbar .sidebar-toggle:hover {
-	background-color: #1e282c;
+	background-color: #46826B;
+}
+
+.skin-blue .wrapper, .skin-blue .main-sidebar, .skin-blue .left-side {
+    background-color: #46826B;
+
+    -webkit-box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.32);
+
+    z-index:10000;
 }
 
 .navbar-custom-menu small {
@@ -19,4 +29,48 @@
     border-top: 0;
     //border: 1px solid white;
     color: #666;
+}
+
+.skin-blue .sidebar-menu>li:hover>a, .skin-blue .sidebar-menu>li.active>a {
+    background: #3A6B58;
+}
+
+.skin-blue .sidebar-menu>li:hover>a, .skin-blue .sidebar-menu>li.active>a {
+    border-left-color: #F0FF05;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.19);
+    color: white;
+}
+
+.form-control:focus {
+    border-color: #FFF823;
+    color: #FFF823;
+}
+
+.input-group .input-group-addon {
+    background-color: rgb(70, 130, 107);
+    color: white;
+}
+
+.box {
+    width:inherit !important;
+    margin:1em;
+    background: inherit;
+    border:none;
+}
+
+.box-footer {
+    background: inherit;
+}
+
+.pagination>li>a {
+    background: #46826B;
+    color: white;
+}
+
+.pagination>li>a:hover {
+    background: white !important;
+    color: black;
 }

@@ -1,4 +1,4 @@
-<head>
+<header>
   <script src="/assets/Flexigrid-master/js/flexigrid.js"></script>
   <script src="/assets/dist/js/tableinit.js"></script>
 <!--
@@ -7,7 +7,7 @@
   <script src="/assets/quickblox/qbconfig.js"></script>
   <script src="/assets/quickblox/qbinit.js"></script>
 -->
-</head>
+</header>
 
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -17,6 +17,10 @@
       <small><?php echo $page_desc; ?></small>
     </h1>
   </section>
+  <div class="grid-toolbar">
+    <button type="button" class="btn-edit btn btn-flat btn-girdtoolbar">EDIT</button>
+    <button type="button" class="btn-delete btn btn-flat btn-girdtoolbar">DELETE</button>
+  </div>
 
   <div id="main-table"></div>
 </div>
@@ -34,6 +38,8 @@ $(function() {
     */
     initTable();
     //initQB();
+
+     
 
   });
 });

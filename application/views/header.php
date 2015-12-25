@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="/assets/dist/css/skins/_all-skins.min.css">
 	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/assets/dist/css/AdminLTE.min.css">
+	<link rel="stylesheet" href="/assets/plugins/iCheck/all.css">
 	<link rel="stylesheet" href="/assets/plugins/iCheck/square/blue.css">
 
 	<link rel="stylesheet" href="/assets/plugins/iCheck/flat/blue.css">
@@ -24,6 +25,14 @@
 	<script src="/assets/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/assets/plugins/iCheck/icheck.min.js"></script>
+	<script src="/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
   
   <!-- iCheck -->
+
+  <?php
+  	echo 
+  	"<script>
+  		var siteUrl = '" . $this->config->base_url() . "';
+  	</script>"
+  ?>
 </head>

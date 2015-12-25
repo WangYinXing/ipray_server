@@ -10,7 +10,7 @@ Class Mdl_Users extends Mdl_Campus {
 	public function online_usercnt() {
 		$this->db->select("id");
 		$this->db->from($this->table);
-		$this->db->where('token', 'a');
+		$this->db->where('token != "" AND devicetoken != ""');
 
 		return $this->db->get()->num_rows();
 	}

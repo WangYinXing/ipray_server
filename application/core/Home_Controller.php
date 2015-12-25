@@ -14,10 +14,11 @@ class Home_Controller extends CI_Controller {
     $this->viewData = array();
   }
 
-  protected function initView($page, $desc, $param) {
+  protected function initView($view, $page, $desc, $param) {
   	$this->viewData['session'] = $this->session;
 
-  	$this->viewData['page'] = $page;
+  	$this->viewData['view'] = $view;
+    $this->viewData['page'] = $page;
   	$this->viewData['page_desc'] = $desc;
     $this->viewData['param'] = $param;
   }

@@ -57,7 +57,7 @@ class Mdl_Campus extends CI_Model {
 		return $users->result();
 	}
 
-	public function get_list($rp, $page, $query, $qtype, $sortname, $sortorder) {
+	public function get_list($rp, $page, $query, $qtype, $sortname, $sortorder, $count = false) {
 		$this->db->select("*");
 		$this->db->from($this->table);
 		$this->db->order_by($sortname, $sortorder);
@@ -65,8 +65,13 @@ class Mdl_Campus extends CI_Model {
 		if ($query != "" && $qtype != "") {
 			$this->db->like($qtype, $query);
 		}
+
+		if ($count)
+			return $this->db->count_all_results();
 		
 		$this->db->limit($rp, $rp * ($page - 1));
+
+		
 
 		return $this->db->get()->result();
 	}

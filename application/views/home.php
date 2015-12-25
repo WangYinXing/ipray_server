@@ -22,7 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		/*
 			Load page contents....
 		*/
-			$this->view($page);
+			$this->view($view);
 		?>
 
 

@@ -1,6 +1,6 @@
 <header class="main-header">
   <!-- Logo -->
-  <a href="/home" class="logo">
+  <a style="display:none" href="/home" class="logo">
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <img src="<?php echo base_url(); ?>assets/dist/img/iprayadminlogo.png" />
   </a>

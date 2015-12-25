@@ -22,15 +22,20 @@ class Dashboard extends Home_Controller {
 
 	function __construct() {
 		parent::__construct();
+
 		$this->load->model('Mdl_Dashboard', '', TRUE);
 		$this->load->model('Mdl_Users');
+		$this->load->model('Mdl_Requests');
+		$this->load->model('Mdl_Prays');
 	}
 
 	public function index() {
-		parent::initView('dashboard', 'dashboard',
+		parent::initView('dashboard', 'dashboard', 'dashboard',
 			array(
 				'registered_users' => $this->Mdl_Users->get_length(),
 				'online_users' => $this->Mdl_Users->online_usercnt(),
+				'requests' => count($this->Mdl_Requests->getAll()),
+				'prays' => count($this->Mdl_Prays->getAll()),
 				)
 			);
 

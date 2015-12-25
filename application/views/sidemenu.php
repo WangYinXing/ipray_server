@@ -15,34 +15,25 @@
     </div>
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu">
-      <li class="header">WE TRUST IN OUR GOD</li>
+      <li style="display:none" class="header">WE TRUST IN OUR GOD</li>
       <li <?php if ($page == 'dashboard') echo "class='active'";?>>
-        <a href="dashboard">
+        <a href='<?php echo site_url("dashboard"); ?>'>
           <i class="fa fa-dashboard"></i> <span>DASHBOARD</span>
         </a>
       </li>
       <li <?php if ($page == 'users') echo "class='active'";?>>
-        <a href="users">
+        <a href='<?php echo site_url("users"); ?>'>
           <i class="fa fa-user"></i> <span>iPRAYEES</span>
-          <small class="label pull-right bg-green">new</small>
         </a>
       </li>
       <li <?php if ($page == 'storage') echo "class='active'";?>>
-        <a href="storage">
-          <i class="fa fa-user"></i> <span>STORAGE</span>
-          <small class="label pull-right bg-green">new</small>
+        <a href='<?php echo site_url("storage"); ?>'>
+          <i class="fa fa-user"></i> <span>PRAYS</span>
         </a>
       </li>
-      <li <?php if ($page == 'settings') echo "class='active'";?>>
-        <a href="settings">
-          <i class="fa fa-user"></i> <span>SETTINGS</span>
-          <small class="label pull-right bg-green">new</small>
-        </a>
-      </li>
-      <li <?php if ($page == 'email') echo "class='active'";?>>
-        <a href="settings">
-          <i class="fa fa-user"></i> <span>EMAIL NOTIFICATION</span>
-          <small class="label pull-right bg-green">new</small>
+      <li <?php if ($page == 'emailcenter') echo "class='active'";?>>
+        <a href='<?php echo site_url("EmailCenter"); ?>'>
+          <i class="fa fa-user"></i> <span>EMAIL CENTER</span>
         </a>
       </li>
       <li><a href="documentation/index.html"><i class="fa fa-book"></i> <span>ABOUT US</span></a></li>
