@@ -29,6 +29,7 @@ class AdminLogin extends Home_Controller {
 	public function index() {
 	    if( $this->session->userdata('isLoggedIn') ) {
 	        redirect('/dashboard');
+	        $this->show_login(false);
 	    } else {
 	        $this->show_login(false);
 	    }
@@ -53,8 +54,7 @@ class AdminLogin extends Home_Controller {
 		//Ensure values exist for email and pass, and validate the user's credentials
 		if( $username && $pass && $this->Mdl_AdminUsers->login($username, $pass)) {
 		  // If the user is valid, redirect to the main view
-		  //redirect('/dashboard');
-		  $this->load->view('invalidtoken',$data);
+		  redirect('/dashboard');
 		} else {
 		  // Otherwise show the login screen with an error message.
 		  $this->show_login(true);

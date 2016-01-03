@@ -30,6 +30,9 @@ class Dashboard extends Home_Controller {
 	}
 
 	public function index() {
+		$data = array("error"=>"Opps you can't login ipray admin at this moment. sorry.");
+		$this->load->view('invalidtoken',$data);
+		return;
 		parent::initView('dashboard', 'dashboard', 'dashboard',
 			array(
 				'registered_users' => $this->Mdl_Users->get_length(),
