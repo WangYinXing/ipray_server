@@ -1,7 +1,7 @@
 <?php
 
 //  application/core/MY_Controller.php
-class Api_User extends Home_Controller {
+class Api_User extends Api_Unit {
 
   public function __construct(){
     parent::__construct();
