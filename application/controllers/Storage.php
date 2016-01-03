@@ -81,7 +81,7 @@ class Storage extends Home_Controller{
 					$reqHtmlRow .= "</video>";
 				}
 				else if ($req->mediatype == "TEXT") {
-					$reqHtmlRow .= "<div>No media attached.</div>";
+					$reqHtmlRow .= "No media attached.";
 				}
 			}
 			else {
@@ -89,6 +89,10 @@ class Storage extends Home_Controller{
 			}
 
 			$reqHtmlRow .= "</div>";
+
+			if ($req->motive == null || $req->motive == "")		$req->motive = "Not provided.";
+			if ($req->detail == null || $req->detail == "")		$req->detail = "Not provided.";
+
 
 			$reqHtmlRow .= "<div class='table-cell'>" . $req->motive . "</div>";
 			$reqHtmlRow .= "<div class='table-cell'>" . $req->detail . "</div>";

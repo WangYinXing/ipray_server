@@ -36,7 +36,6 @@
           <i class="fa fa-user"></i> <span>EMAIL CENTER</span>
         </a>
       </li>
-      <li><a href="documentation/index.html"><i class="fa fa-book"></i> <span>ABOUT US</span></a></li>
     </ul>
   </section>
   <!-- /.sidebar -->

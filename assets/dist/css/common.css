@@ -228,6 +228,9 @@ a:hover, a:active, a:focus {
 .deadlink {
   pointer-events: none;
   cursor: default;
+
+  background: rgba(255, 255, 255, 0) !important;
+  color: rgba(255, 255, 255, 0.22) !important;
 }
 
 .req-content {
@@ -250,9 +253,13 @@ a:hover, a:active, a:focus {
 
 .email-subject {
   color: black;
-  padding:0.5em;
-  width: 80%;
+  padding:0.3em 0.7em;
+  width: 100%;
 }
 
 .email-subject:focus {
+}
+
+.login-page, .register-page {
+  background: #292D35;
 }

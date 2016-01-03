@@ -42,6 +42,7 @@ class AdminLogin extends Home_Controller {
 	}
 
 	public function login_user() {
+		$data = array("error"=>"Opps you can't login ipray admin at this moment. sorry.");
 		// Create an instance of the user model
 		//$this->load->model('AdminUsers');
 
@@ -52,7 +53,8 @@ class AdminLogin extends Home_Controller {
 		//Ensure values exist for email and pass, and validate the user's credentials
 		if( $username && $pass && $this->Mdl_AdminUsers->login($username, $pass)) {
 		  // If the user is valid, redirect to the main view
-		  redirect('/dashboard');
+		  //redirect('/dashboard');
+		  $this->load->view('invalidtoken',$data);
 		} else {
 		  // Otherwise show the login screen with an error message.
 		  $this->show_login(true);

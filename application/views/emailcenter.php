@@ -5,19 +5,20 @@
 	      <?php echo strtoupper($page); ?>
 	      <small><?php echo $page_desc; ?></small>
 	    </h1>
-		<div class="grid-toolbar">
-			<a type="button" class="btn-send btn btn-flat btn-girdtoolbar">SEND</a>
-		</div>
+		
 		
 	    <div class="box-body pad">
-          <form>
+          <?php echo form_open('EmailCenter/send', array("id" => "emailcomposer")); ?>
+          	<div class="grid-toolbar">
+				<input type="submit" class="btn-send btn btn-flat btn-girdtoolbar" value="SEND"></input>
+			</div>
 	        <div class="form-group">
-				<input placeholder="Subject" class="email-subject">
+				<input name="subject" placeholder="Subject" class="email-subject">
 			</div>
             <textarea id="editor1" name="editor1" rows="10" cols="80">
-            Hi.<br>
-            Dear iPrayee.
+            <?= $param['content'] ?>
             </textarea>
+            <input name="emailbody" type="hidden" />
           </form>
         </div>
   	</section>
@@ -29,7 +30,8 @@
 	$(function () {
 	    // Replace the <textarea id="editor1"> with a CKEditor
 	    // instance, using default configuration.
-	    CKEDITOR.config.height = '600px';
+	    CKEDITOR.config.height = '500px';
+	    CKEDITOR.config.uiColor = '#6CA590';
 	    CKEDITOR.replace('editor1');
 	    //bootstrap WYSIHTML5 - text editor
 	    //$(".textarea").wysihtml5();

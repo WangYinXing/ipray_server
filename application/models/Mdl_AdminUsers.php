@@ -31,10 +31,6 @@ Class Mdl_AdminUsers extends Mdl_Campus {
 	            'id'=>$this->details->id,
 	            'username'=> $this->details->username,
 	            'email'=>$this->details->email,
-	            'avatar'=>$this->details->avatar,
-	            'tagline'=>$this->details->tagline,
-	            'isAdmin'=>$this->details->isAdmin,
-	            'teamId'=>$this->details->teamId,
 	            'isLoggedIn'=>true
 	        )
 	    );
