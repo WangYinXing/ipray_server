@@ -194,7 +194,7 @@ class Api_User extends Api_Unit {
     Sign in...
   _________________________________________________________________________________________________________*/
   public function api_entry_signin() {
-    parent::returnWithErr("Opps. ipray service is expired... sorry.");
+    //parent::returnWithErr("Opps. ipray service is expired... sorry.");
     parent::validateParams(array('email', 'password'));
 
     $users = $this->Mdl_Users->getAll("email", $_POST["email"]);
