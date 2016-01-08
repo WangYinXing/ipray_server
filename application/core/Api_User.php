@@ -204,7 +204,7 @@ class Api_User extends Api_Unit {
     $user = $users[0];
 
     if (!$user->verified)                               parent::returnWithErr("This account is not verified yet.");
-    if (!$user->suspended)                              parent::returnWithErr("This account is under suspension.");
+    if ($user->suspended)                               parent::returnWithErr("This account is under suspension.");
     if ($user->password != md5($_POST["password"]))     parent::returnWithErr("Invalid password.");
 
     parent::returnWithoutErr("Signin succeed.", $user);
