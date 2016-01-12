@@ -179,7 +179,7 @@ class Api_User extends Api_Unit {
     curl_setopt($ch, CURLOPT_POSTFIELDS, 
             array('from' => 'noreply@iPray1.com <postmaster@ipray1.com>',
                   'to' => $newUser['username'] . ' <' . $newUser['email'] . '>',
-                  'subject' => "You have forgot your passowrd.",
+                  'subject' => "Please verify your account.",
                   'html' => $content));
     $result = curl_exec($ch);
     curl_close($ch);
