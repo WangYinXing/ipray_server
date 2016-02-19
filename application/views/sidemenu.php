@@ -26,9 +26,9 @@
           <i class="fa fa-user"></i> <span>iPRAYEES</span>
         </a>
       </li>
-      <li <?php if ($page == 'storage') echo "class='active'";?>>
-        <a href='<?php echo site_url("storage"); ?>'>
-          <i class="fa fa-user"></i> <span>PRAYS</span>
+      <li <?php if ($page == 'requests') echo "class='active'";?>>
+        <a href='<?php echo site_url("requests"); ?>'>
+          <i class="fa fa-user"></i> <span>Requests</span>
         </a>
       </li>
       <li <?php if ($page == 'emailcenter') echo "class='active'";?>>

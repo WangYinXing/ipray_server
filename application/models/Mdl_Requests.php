@@ -32,6 +32,44 @@ Class Mdl_Requests extends Mdl_Campus {
 		return $arg;
 	}
 
+	public function edit($arg) {
+		$id = $arg['id'];
+		unset($arg['id']);
+
+		$this->load->model("Mdl_Users");
+
+		$user = $this->Mdl_Users->get($arg['host']);
+
+		if ($user == null) {
+			$this->latestErr = "Host id is not valid.";
+			return;
+		}
+
+		$this->db->where('id', $id);
+		$this->db->update($this->table, $arg);
+
+		if ($this->db->affected_rows() > 0) {
+			$arg['id'] = $id;
+			$this->latestErr = "";
+
+			return $arg;
+		}
+		//$request = $this->db->insert_id();
+		$this->latestErr = "Failed to create excute sql with : " . json_encode($arg);
+	}
+
+	public function del($id) {
+		$this->db->delete($this->table, ['id' => $id]);
+
+		if ($this->db->affected_rows() > 0) {
+			$this->latestErr = "";
+			return;
+		}
+		//$request = $this->db->insert_id();
+
+		$this->latestErr = "Failed to remove request.";
+	}
+
 	public function like($arg) {
 		$this->latestErr = "";
 

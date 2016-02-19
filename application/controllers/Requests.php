@@ -2,174 +2,171 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-Class Requests extends Api_Unit {
-	public function __construct() {
+class Requests extends Api_Request{
+	function __construct() {
 		parent::__construct();
 
-		$this->load->model('Mdl_Requests', '', TRUE);
+		$this->load->helper('url');
 	}
 
-	public function index () {
-
-	}
-
-
-
-
-/*########################################################################################################################################################
-	API Entries
-########################################################################################################################################################*/
-	public function api_entry_list() {
-		parent::validateParams(array("rp", "page", "query", "qtype", "sortname", "sortorder"));
-
+	public function index($page = 1, $recordsInPage = 5, $pageRange = 5) {
+		$this->load->model("Mdl_Requests");
 		$this->load->model("Mdl_Users");
-		$this->load->model("Mdl_Prays");
-		$this->load->model("Mdl_Comments");
 
-		$data = $this->Mdl_Requests->get_list(
-			$_POST['rp'],
-			$_POST['page'],
-			$_POST['query'],
-			$_POST['qtype'],
-			$_POST['sortname'],
-			$_POST['sortorder']);
+		$requests = $this->Mdl_Requests->get_list(
+			$recordsInPage,
+			$page,
+			'',
+			'',
+			'',
+			'');
 
-		foreach ($data as $key => $val) {
-			$val->host = $this->Mdl_Users->get($val->host);
-			unset($val->host->password);
-
-			$val->comments = $comments = $this->Mdl_Comments->getAll("request", $val->id);
-
-			$val->prayers = $this->Mdl_Prays->getAll("request", $val->id);
-
-			if (count($comments) == 0)
-				continue;
-
-			foreach ($comments as $key => $val) {
-				$user = $this->Mdl_Users->get($val->commenter);
-
-				$val->commenter = array(
-					'qbid' => $user->qbid,
-					'id' => $user->id,
-					'username' => $user->username,
-					'email' => $user->email
-					);
-			}
-		}
-
-		parent::returnWithoutErr("Request has been listed successfully.", array(
-			'page'=>$_POST['page'],
-			'total'=>$this->Mdl_Requests->get_length(),
-			'rows'=>$data,
-		));
-	}
-
-	/*--------------------------------------------------------------------------------------------------------
-		Create Request... 
-		*** POST
-	_________________________________________________________________________________________________________*/
-	public function api_entry_create() {
-		parent::validateParams(array("type", "host"));
-
-		if ($_POST["type"] == "REQ_COMMON")				parent::validateParams(array("motive", "detail", "anonymous"));
-		else if ($_POST["type"] == "REQ_FEED") {
-			parent::validateParams(array("mediatype"));
-
-			if ($_POST["mediatype"] == "VIDEO" || $_POST["mediatype"] == "IMG") 	parent::validateParams(array("mediaurl"));
-			else if ($_POST["mediatype"] == "TEXT") 								parent::validateParams(array("detail"));
-			else parent::returnWithErr("Unknown media type.");
-		}
-		else {
-			parent::returnWithErr("Unknown request type.");
-		}
-
-		$request = $this->Mdl_Requests->create($this->safeArray(array('host', 'motive', 'detail', 'anonymous', 'type', 'mediatype', 'mediaurl'), $_POST));
-
-		if ($request == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
+		$requestCnt = $this->Mdl_Requests->get_list(
+			$recordsInPage,
+			$page,
+			'',
+			'',
+			'',
+			'',
+			true);
 
 		/*
-			Created successfully .... 
+			Pagination....
 		*/
-		parent::returnWithoutErr("Request has been created successfully.", $request);
-	}
+		$pageCnt = ceil($requestCnt / $recordsInPage);
 
+		$paginationHTML = "<nav style='text-align:center'><ul class='pagination'>";
 
-	/*--------------------------------------------------------------------------------------------------------
-		Comment to request...
-		*** POST
-	_________________________________________________________________________________________________________*/
-	public function api_entry_comment() {
-		parent::validateParams(array("request", "user", "comment"));
+		$paginationHTML .= "<li><a href='" . site_url("Requests/" . max(1, $page - 1)) . "' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a></li>";
 
-		$this->load->model("Mdl_Users");
-		$this->load->model("Mdl_Requests");
+		for ($i=0; $i<$pageRange; $i++) {
+			$currentPage = $i + $page;
+			$className = "";
 
-		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
-		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
+			if ($currentPage > $pageCnt) {
+				$className = "deadlink";
+			}
 
-		$this->load->model("Mdl_Comments");
-
-
-		if (($comment = $this->Mdl_Comments->create(array(
-			'request' => $_POST['request'],
-			'commenter' => $_POST['user'],
-			'comment' => $_POST['comment'],
-			))) == null)	parent::returnWithErr($this->Mdl_Comments->latestErr);
-
-		parent::returnWithoutErr("User commented successfully.", $comment);
-	}
-
-	/*--------------------------------------------------------------------------------------------------------
-		Like to request...
-		*** POST
-	_________________________________________________________________________________________________________*/
-	public function api_entry_like() {
-		parent::validateParams(array("request", "user", "like"));
-
-		if ($_POST["like"] != 0 && $_POST["like"] != 1) {
-			parent::returnWithErr("[like] should be '0' or '1'.");
+			$paginationHTML .= "<li><a class='" . $className . "' href='" . site_url("Requests/" . $currentPage) . "'>" . $currentPage . "</a></li>";
 		}
 
-		$this->load->model("Mdl_Users");
-		$this->load->model("Mdl_Requests");
+		$paginationHTML .= "<li><a href='" . site_url("Requests/" . min($pageCnt, $page + 1)) . "' aria-label='Previous'><span aria-hidden='true'>&raquo;</span></a></li>";
 
-		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
-		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
+		$paginationHTML .= "</ul></nav>";
+
+		$requestsHTML = array();
+
+		foreach ($requests as $key=>$req) {
+
+			$link = site_url($this->ctrlName . "/edit/" . $req->id);
+
+			$reqHtmlRow = "<a class='table-row req-row' href='" . $link . "'>";
+
+			$host = $this->Mdl_Users->get($req->host);
+			$reqHtmlRow .= "<div class='table-cell'>" . $host->username . "</div>";
+
+			$reqHtmlRow .= "<div class='table-cell' style='text-align:center'>";
+
+			if ($req->type == "REQ_FEED") {
+				if 		($req->mediatype == "IMG") {
+					$reqHtmlRow .= "<img class='req-feed-img' src='" . $req->mediaurl . "''></img>";
+				}
+				else if ($req->mediatype == "VIDEO") {
+					$reqHtmlRow .= "<video class='req-feed-vid' controls='' name='media'>";
+					$reqHtmlRow .= "<source src='" . $req->mediaurl . "'' type='video/mp4'>";
+					$reqHtmlRow .= "</video>";
+				}
+				else if ($req->mediatype == "TEXT") {
+					$reqHtmlRow .= "No media attached.";
+				}
+			}
+			else {
+				$reqHtmlRow .= "<div>...</div>";
+			}
+
+			$reqHtmlRow .= "</div>";
+
+			if ($req->motive == null || $req->motive == "")		$req->motive = "Not provided.";
+			if ($req->detail == null || $req->detail == "")		$req->detail = "Not provided.";
 
 
-		if (($request = $this->Mdl_Requests->like(
+			$reqHtmlRow .= "<div class='table-cell'>" . $req->motive . "</div>";
+			$reqHtmlRow .= "<div class='table-cell'>" . $req->detail . "</div>";
+
+			
+			$reqHtmlRow .= "</a>";
+
+			array_push($requestsHTML, $reqHtmlRow);
+		}
+
+		parent::initView($this->ctrlName . '/list.php', 'pray request list.', 'Manage motive, details and media such as images and videos.',
 			array(
-				'request' => $_POST['request'],
-				'user' => $_POST['user'],
-				'like' => $_POST['like']
+				"requestsHTML" => $requestsHTML,
+				"paginationHTML" => $paginationHTML
 				)
-			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
+		);
 
-		parent::returnWithoutErr("User liked or disliked successfully.", $request);
+		parent::loadView();
 	}
 
-	/*--------------------------------------------------------------------------------------------------------
-		Like to request...
-		*** POST
-	_________________________________________________________________________________________________________*/
-	public function api_entry_share() {
-		parent::validateParams(array("request", "user"));
+	public function edit($id) {
 
-		$this->load->model("Mdl_Users");
 		$this->load->model("Mdl_Requests");
+		$this->load->model("Mdl_Comments");
+		$this->load->model("Mdl_Users");
 
-		if (!$this->Mdl_Users->get($_POST['user']))				parent::returnWithErr("User id is not valid.");
-		if (!$this->Mdl_Requests->get($_POST['request']))		parent::returnWithErr("Request id is not valid.");
+		$req = $this->Mdl_Requests->get($id);
+		$requestMediaHTML = "";
 
+		if ($req->type == "REQ_FEED") {
+			if ($req->mediatype == "IMG") {
+				$requestMediaHTML .= "<img class='req-feed-img' src='" . $req->mediaurl . "''></img>";
+			}
+			else if ($req->mediatype == "VIDEO") {
+				$requestMediaHTML .= "<video class='req-feed-vid' controls='' name='media'>";
+				$requestMediaHTML .= "<source src='" . $req->mediaurl . "'' type='video/mp4'>";
+				$requestMediaHTML .= "</video>";
+			}
+			else if ($req->mediatype == "TEXT") {
+				$requestMediaHTML = "No media attached.";
+			}
+		}
+		else {
+			$requestMediaHTML .= "...";
+		}
 
-		if (($request = $this->Mdl_Requests->share(
+		$comments = $this->Mdl_Comments->getAll("request", $req->id);
+
+		$commentsHTML = "<div>";
+
+		if (count($comments)) {
+			foreach ($comments as $comm) {
+				$comm->commenter = $this->Mdl_Users->get($comm->commenter);
+
+				$userLink = site_url("Users/edit/" . $comm->commenter->id);
+
+				$commentsHTML .= "<p class='req-comment'>";
+				$commentsHTML .= $comm->comment;
+				$commentsHTML .= "<div>Written by <span class='req-commenter'><a href='" . $userLink . "'>" . $comm->commenter->username . "  </a></span> " . $comm->updated_time . "</div>";
+				$commentsHTML .= "</p>";
+			}
+		}
+		else {
+			$commentsHTML .= "No comments provided.";
+		}
+
+		$commentsHTML .= "</div>";
+
+		parent::initView($this->ctrlName . '/edit.php', 'Pray request', 'Manage media such as images and videos',
 			array(
-				'request' => $_POST['request'],
-				'user' => $_POST['user']
+				"request" => $req,
+				"requestMediaHTML" => $requestMediaHTML,
+				"commentsHTML" => $commentsHTML,
+				"commentCount" => count($comments)
 				)
-			)) == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
+		);
 
-		parent::returnWithoutErr("User sharing is recorded successfully.", $request);
+		parent::loadView();
 	}
 }
 

@@ -15,7 +15,7 @@ class Users extends Api_User {
 	}
 
 	public function index() {
-		parent::initView('users', 'users', 'Manage iprayees for CRUDing',
+		parent::initView($this->ctrlName . '/list', 'users', 'Manage iprayees for CRUDing',
 			array()
 		);
 
@@ -25,7 +25,7 @@ class Users extends Api_User {
 	public function edit($arg) {
 		$user = $this->Mdl_Users->get($arg);
 
-		parent::initView('user_edit', 'users', 'Edit iprayee information.',
+		parent::initView($this->ctrlName . '/edit', 'users', 'Edit iprayee information.',
 			$user
 		);
 

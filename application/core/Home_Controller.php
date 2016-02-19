@@ -2,6 +2,8 @@
 
 //  application/core/MY_Controller.php
 class Home_Controller extends CI_Controller {
+  // Controller name.... such as Requests, Users ... 
+  protected $ctrlName = "undefined";
 
   public function __construct(){
     parent::__construct();
