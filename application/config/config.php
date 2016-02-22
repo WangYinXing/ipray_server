@@ -23,8 +23,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
+$config['base_url'] = '';
 //$config['base_url'] = 'http://ipraytest.com/';
-$config['base_url'] = 'http://ipray1.com/';
+//$config['base_url'] = 'http://ipray1.com/';
 
 /*
 |--------------------------------------------------------------------------
@@ -535,8 +536,11 @@ function __autoload($class)
         {
             include $file;
         }
- 
-        elseif (file_exists($file = APPPATH . 'libraries/' . $class . '.php'))
+        else if (file_exists($file = APPPATH . 'libraries/' . $class . '.php'))
+        {
+            include $file;
+        }
+        else if (file_exists($file = APPPATH . 'api/' . $class . '.php'))
         {
             include $file;
         }
