@@ -22,8 +22,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/assets/plugins/iCheck/icheck.min.js"></script>
 
-	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/common.css">
-  <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/skin-custom.css">
+	<link rel="stylesheet" href="/assets/dist/css/common.css">
+  <link rel="stylesheet" href="/assets/dist/css/skin-custom.css">
 </head>
 
 
@@ -31,13 +31,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <img src="<?php echo base_url(); ?>assets/dist/img/iprayadminlogo.png" />
+    <img src="/assets/dist/img/iprayadminlogo.png" />
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
 
    <?php echo validation_errors(); ?>
-   <?php echo form_open('AdminLogin/login_user'); ?>
+   <form action='/AdminLogin/login_user' method="POST">
    <?php if ($error) { echo "<p style='color:#FF8264'>Failed to login.</p>"; } ?>
       <div class="form-group has-feedback">
         <input name="username" type="text" class="form-control" placeholder="User name">
