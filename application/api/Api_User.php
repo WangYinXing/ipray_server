@@ -40,6 +40,7 @@ class Api_User extends Api_Unit {
     Sign up...
   _________________________________________________________________________________________________________*/
   public function api_entry_signup() {
+
     parent::validateParams(array("username", "email", "password", "fullname", "church", "province", "city", "bday"));
 
     $qbToken = $this->qbhelper->generateSession();
@@ -52,7 +53,6 @@ class Api_User extends Api_Unit {
       $_POST['email'],
       QB_DEFAULT_PASSWORD
     );
-
     /*
 
     */
