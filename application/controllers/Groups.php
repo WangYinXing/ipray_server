@@ -24,6 +24,24 @@ Class Groups extends Api_Unit {
 		Create group... 
 		*** POST
 	_________________________________________________________________________________________________________*/
+  public function api_entry_list() {
+  	parent::validateParams(array("rp", "page", "query", "qtype", "sortname", "sortorder"));
+
+    $data = $this->Mdl_Groups->get_list(
+      $_POST['rp'],
+      $_POST['page'],
+      $_POST['query'],
+      $_POST['qtype'],
+      $_POST['sortname'],
+      $_POST['sortorder']);
+
+    echo json_encode(array(
+      'page'=>$_POST['page'],
+      'total'=>$this->Mdl_Groups->get_length(),
+      'rows'=>$data,
+    ));
+  }
+
 	public function api_entry_create() {
 		parent::validateParams(array("host", "name", "church", "city", "province"));
 
@@ -57,12 +75,15 @@ Class Groups extends Api_Unit {
 		if ($this->Mdl_Users->get($_POST["user"]) == null)		parent::returnWithErr("User id is not valid.");
 		if ($this->Mdl_Groups->get($_POST["group"]) == null)	parent::returnWithErr("Group id is not valid.");
 
-		if (($group = $this->Mdl_Groups->addUser(
+		if ($group = $this->Mdl_Groups->addUser(
+			/*
 			array(
 				'group' => $_POST["group"],
 				'user' => $_POST["user"],
 				)
-			)) == null)
+			)
+			*/
+			$_POST["group"], $_POST["user"]) == null)
 			parent::returnWithErr($this->Mdl_Groups->latestErr);
 
 		parent::returnWithoutErr("User has been added successfully.", $group);
@@ -80,12 +101,15 @@ Class Groups extends Api_Unit {
 		if ($this->Mdl_Users->get($_POST["user"]) == null)		parent::returnWithErr("User id is not valid.");
 		if ($this->Mdl_Groups->get($_POST["group"]) == null)	parent::returnWithErr("Group id is not valid.");
 
-		if (($group = $this->Mdl_Groups->removeUser(
+		if ($group = $this->Mdl_Groups->removeUser(
+			/*
 			array(
 				'group' => $_POST["group"],
 				'user' => $_POST["user"],
 				)
-			)) == null)
+			)
+			*/
+			$_POST["group"], $_POST["user"]) == null)
 			parent::returnWithErr($this->Mdl_Groups->latestErr);
 
 		parent::returnWithoutErr("User has been removed successfully.", $group);

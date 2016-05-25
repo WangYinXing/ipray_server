@@ -6,21 +6,6 @@ Class Mdl_Groups extends Mdl_Campus {
 		$this->table = 'ipray_groups';
 	}
 
-	public function get_list($rp, $page, $query, $qtype, $sortname, $sortorder) {
-		$this->db->select("*");
-		$this->db->from($this->table);
-		$this->db->order_by($sortname, $sortorder);
-
-		if ($query != "" && $qtype != "") {
-			$this->db->like($qtype, $query);
-		}
-		
-		$this->db->limit($rp, $rp * ($page - 1));
-
-		return $this->db->get()->result();
-	}
-
-
 	public function create($arg) {
 		$this->load->model("Mdl_Users");
 
