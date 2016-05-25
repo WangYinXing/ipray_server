@@ -27,6 +27,8 @@ Class Groups extends Api_Unit {
   public function api_entry_list() {
   	parent::validateParams(array("rp", "page", "query", "qtype", "sortname", "sortorder"));
 
+  	$this->load->model("Mdl_Users");
+	
     $data = $this->Mdl_Groups->get_list(
       $_POST['rp'],
       $_POST['page'],
@@ -35,6 +37,12 @@ Class Groups extends Api_Unit {
       $_POST['sortname'],
       $_POST['sortorder']);
 
+
+    foreach ($data as $key => $val) {
+    	$host = $val->host;
+    	$val->host = $this->Mdl_Users->get($host);
+    }
+    
     echo json_encode(array(
       'page'=>$_POST['page'],
       'total'=>$this->Mdl_Groups->get_length(),
