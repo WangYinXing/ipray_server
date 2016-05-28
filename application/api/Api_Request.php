@@ -63,7 +63,7 @@ class Api_Request extends Api_Unit {
 		*** POST
 	_________________________________________________________________________________________________________*/
 	public function api_entry_create() {
-		parent::validateParams(array("type", "host", 'group'));
+		parent::validateParams(array("type", "host"));
 
 		if ($_POST["type"] == "REQ_COMMON")				parent::validateParams(array("motive", "detail", "anonymous"));
 		else if ($_POST["type"] == "REQ_FEED") {
