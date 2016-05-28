@@ -51,7 +51,7 @@ Class Groups extends Api_Unit {
   }
 
 	public function api_entry_create() {
-		parent::validateParams(array("host", "name", "church", "city", "province"));
+		parent::validateParams(array("host", "name", "church", "city", "province", 'icon'));
 
 		$group = $this->Mdl_Groups->create(array(
 			'host' => $_POST['host'],
@@ -59,7 +59,7 @@ Class Groups extends Api_Unit {
 			'church' => $_POST['church'],
 			'city' => $_POST['city'],
 			'province' => $_POST['province'],
-			//'icon' => $_POST['icon'],
+			'icon' => $_POST['icon'],
 			));
 
 		if ($group == null)			parent::returnWithErr($this->Mdl_Groups->latestErr);

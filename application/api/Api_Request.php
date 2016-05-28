@@ -63,7 +63,7 @@ class Api_Request extends Api_Unit {
 		*** POST
 	_________________________________________________________________________________________________________*/
 	public function api_entry_create() {
-		parent::validateParams(array("type", "host"));
+		parent::validateParams(array("type", "host", 'group'));
 
 		if ($_POST["type"] == "REQ_COMMON")				parent::validateParams(array("motive", "detail", "anonymous"));
 		else if ($_POST["type"] == "REQ_FEED") {
@@ -77,7 +77,7 @@ class Api_Request extends Api_Unit {
 			parent::returnWithErr("Unknown request type.");
 		}
 
-		$request = $this->Mdl_Requests->create($this->safeArray(array('host', 'motive', 'detail', 'anonymous', 'type', 'mediatype', 'mediaurl'), $_POST));
+		$request = $this->Mdl_Requests->create($this->safeArray(array('host', 'motive', 'detail', 'anonymous', 'type', 'mediatype', 'mediaurl', 'group'), $_POST));
 
 		if ($request == null)	parent::returnWithErr($this->Mdl_Requests->latestErr);
 

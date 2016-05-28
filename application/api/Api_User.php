@@ -36,6 +36,85 @@ class Api_User extends Api_Unit {
     ));
   }
 
+  function distance($lat1, $lon1, $lat2, $lon2, $unit) {
+    $theta = $lon1 - $lon2;
+
+    $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+    $dist = acos($dist);
+    $dist = rad2deg($dist);
+    $miles = $dist * 60 * 1.1515;
+    $unit = strtoupper($unit);
+
+    if ($unit == "Kilometer") {
+      return ($miles * 1.609344);
+    } else if ($unit == "Mile") {
+      return ($miles * 0.8684);
+    } else {
+      return $miles;
+    }
+  }
+
+  public function api_entry_updatepos() {
+    parent::validateParams(array("user", "longitude", "latitude", "location"));
+
+    $user = $this->Mdl_Users->get($_POST['user']);
+
+    if ($user == null)
+      parent::returnWithErr('Invalid user.');
+
+    $arg = [
+      'id' => $_POST['user'],
+      'longitude' => $_POST['longitude'],
+      'latitude' => $_POST['latitude'],
+      'location' => $_POST['location'],
+      ];
+
+    
+
+    $this->Mdl_Users->update($arg);
+
+    
+
+    parent::returnWithoutErr("Succeed to update position.", null);
+
+  }
+
+  public function api_entry_nearusers() {
+    parent::validateParams(array("user", "radius", "unit"));
+    
+    $user = $this->Mdl_Users->get($_POST['user']);
+
+    $radius = $_POST['radius'];
+    $unit = $_POST['unit'];
+    if (!$radius)
+      $radius = 100;
+    
+
+    if ($unit != 'Kilometer' && $unit !== 'Mile')
+      parent::returnWithErr("unit should be either 'Kilometer' or 'Mile'.");
+
+    if ($user == null)
+      parent::returnWithErr('Invalid user.');
+
+    $users = $this->Mdl_Users->getAll();
+    $nearUsers = [];
+
+    foreach ($users as $anotherUser) {
+      if ($user->id == $anotherUser->id)
+        continue;
+
+      $dist = $this->distance($user->longitude, $user->latitude, $anotherUser->longitude, $anotherUser->latitude, $unit);
+
+      if ($dist < $radius)
+        $nearUsers[] = $anotherUser;
+    }
+
+    parent::returnWithoutErr("Succeed to fetched near users.", [
+      'users' => $nearUsers,
+      'usercnt' => count($nearUsers),
+      ]);
+  }
+
   /*--------------------------------------------------------------------------------------------------------
     Sign up...
   _________________________________________________________________________________________________________*/
